@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'pg'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 const getDbUrl = () => process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 const createTransporter = () => {
   return nodemailer.createTransport({

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 // GET /api/confirmed-proposals?queryId={id}
 export async function GET(request: Request) {

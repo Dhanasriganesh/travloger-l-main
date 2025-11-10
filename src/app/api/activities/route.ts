@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 // GET all activities
 export async function GET() {

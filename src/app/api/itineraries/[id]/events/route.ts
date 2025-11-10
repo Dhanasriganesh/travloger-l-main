@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 // GET /api/itineraries/[id]/events - Fetch all events for an itinerary
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {

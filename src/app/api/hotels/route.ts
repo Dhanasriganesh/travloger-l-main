@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
 import { headers } from 'next/headers'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 // GET all hotels
 export async function GET(request: Request) {

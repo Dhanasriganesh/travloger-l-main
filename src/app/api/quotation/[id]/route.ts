@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
-import { getErrorMessage } from '@/app/api/utils/error'
+import { getErrorMessage } from '@/lib/error'
 
 // GET /api/quotation/[id] - Get quotation data for an itinerary
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
