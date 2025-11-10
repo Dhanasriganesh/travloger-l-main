@@ -586,10 +586,10 @@ const Employees: React.FC = () => {
                   <option value="all">All Locations</option>
                   {availableDestinations.map((destination, index) => (
                     <option 
-                      key={`dest-${typeof destination === 'object' ? destination.id || index : index}`} 
-                      value={typeof destination === 'object' ? destination.name : destination}
+                      key={`dest-${index}-${destination}`} 
+                      value={destination}
                     >
-                      {typeof destination === 'object' ? destination.name : destination}
+                      {destination}
                     </option>
                   ))}
                 </select>
