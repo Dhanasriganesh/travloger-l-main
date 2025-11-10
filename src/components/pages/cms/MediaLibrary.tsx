@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { Card, CardContent } from '../../ui/card'
@@ -299,14 +300,19 @@ const MediaLibrary: React.FC = () => {
                       <tr key={media.id} className="hover:bg-gray-50">
                         <td className="px-3 py-3">
                           {media.image_url ? (
-                            <img 
-                              src={media.image_url} 
-                              alt={media.title}
-                              className="h-16 w-16 object-cover rounded border border-gray-300"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23ddd" width="64" height="64"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%" y="50%" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E'
-                              }}
-                            />
+                            <div className="relative h-16 w-16">
+                              <Image 
+                                src={media.image_url} 
+                                alt={media.title}
+                                fill
+                                sizes="64px"
+                                className="object-cover rounded border border-gray-300"
+                                unoptimized
+                                onError={(event) => {
+                                  event.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23ddd" width="64" height="64"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%" y="50%" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E'
+                                }}
+                              />
+                            </div>
                           ) : (
                             <div className="h-16 w-16 bg-gray-200 rounded flex items-center justify-center">
                               <ImageIcon className="h-6 w-6 text-gray-400" />
@@ -391,11 +397,16 @@ const MediaLibrary: React.FC = () => {
                     />
                     {imagePreview && (
                       <div className="mt-2 relative inline-block">
-                        <img 
-                          src={imagePreview} 
-                          alt="Preview" 
-                          className="h-48 w-auto rounded-md border border-gray-300"
-                        />
+                        <div className="relative h-48 w-64">
+                          <Image 
+                            src={imagePreview} 
+                            alt="Preview" 
+                            fill
+                            sizes="(max-width: 768px) 100vw, 256px"
+                            className="object-contain rounded-md border border-gray-300 bg-white"
+                            unoptimized
+                          />
+                        </div>
                         <button
                           type="button"
                           onClick={() => {

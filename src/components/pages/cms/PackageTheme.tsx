@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
@@ -378,7 +379,9 @@ const PackageTheme: React.FC = () => {
                     <tr key={theme.id} className="hover:bg-gray-50">
                       <td className="px-3 py-4 text-sm text-gray-900">
                         {theme.iconUrl ? (
-                          <img src={theme.iconUrl} alt={theme.name} className="w-8 h-8 object-cover rounded" />
+                          <div className="relative w-8 h-8">
+                            <Image src={theme.iconUrl} alt={theme.name} fill sizes="32px" className="object-cover rounded" unoptimized />
+                          </div>
                         ) : (
                           <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
                             <ImageIcon className="h-4 w-4 text-gray-400" />
@@ -505,11 +508,16 @@ const PackageTheme: React.FC = () => {
                     </div>
                     {(previewUrl || (editingTheme && editingTheme.iconUrl)) && (
                       <div className="mt-2">
-                        <img 
-                          src={previewUrl || editingTheme?.iconUrl} 
-                          alt="Preview" 
-                          className="w-16 h-16 object-cover rounded border border-gray-300"
-                        />
+                        <div className="relative w-16 h-16">
+                          <Image 
+                            src={(previewUrl || editingTheme?.iconUrl)!} 
+                            alt="Preview" 
+                            fill 
+                            sizes="64px"
+                            className="object-cover rounded border border-gray-300 bg-white"
+                            unoptimized
+                          />
+                        </div>
                       </div>
                     )}
                     {editingTheme && !selectedFile && !previewUrl && (

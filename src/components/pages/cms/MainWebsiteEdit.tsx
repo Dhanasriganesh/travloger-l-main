@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 import WebsiteEdit from './WebsiteEdit'
 
 function MainWebsiteEdit() {
@@ -602,7 +603,14 @@ function MainWebsiteEdit() {
                     <div className="mt-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">Preview</label>
                       <div className="relative w-full h-32 rounded-md overflow-hidden border border-gray-200">
-                        <img src={homeHero.backgroundImageUrl} alt="Hero background preview" className="w-full h-full object-cover" />
+                        <Image
+                          src={homeHero.backgroundImageUrl}
+                          alt="Hero background preview"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 640px"
+                          className="object-cover"
+                          unoptimized
+                        />
                       </div>
                       <div className="mt-1.5">
                         <button
@@ -927,8 +935,15 @@ function MainWebsiteEdit() {
                       </div>
                       <div className="col-span-6">
                         {card.imageUrl ? (
-                          <div className="relative w-full h-24 rounded-md overflow-hidden border border-gray-200">
-                            <img src={card.imageUrl} alt="Duration preview" className="w-full h-full object-cover" />
+                      <div className="relative w-full h-24 rounded-md overflow-hidden border border-gray-200">
+                        <Image
+                          src={card.imageUrl}
+                          alt="Duration preview"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 480px"
+                          className="object-cover"
+                          unoptimized
+                        />
                           </div>
                         ) : (
                           <div className="w-full h-24 rounded-md border border-dashed border-gray-300 flex items-center justify-center text-xs text-gray-500">No image</div>
@@ -1323,7 +1338,7 @@ function MainWebsiteEdit() {
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-gray-900">What's in the package</h2>
+                    <h2 className="text-lg font-bold text-gray-900">What&apos;s in the package</h2>
                     <p className="text-xs text-gray-500">Manage inclusions and exclusions</p>
                   </div>
                 </div>
