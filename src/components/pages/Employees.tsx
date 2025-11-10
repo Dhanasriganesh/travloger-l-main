@@ -57,6 +57,19 @@ const Employees: React.FC = () => {
   const createDestinationRef = useRef<HTMLInputElement>(null)
   const editDestinationRef = useRef<HTMLInputElement>(null)
 
+  const safeString = (value: unknown, fallback: string): string => {
+    if (typeof value === 'string') return value
+    if (value === null || value === undefined) return fallback
+    if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+      return value.toString()
+    }
+    try {
+      return String(value)
+    } catch {
+      return fallback
+    }
+  }
+
   const handleEditEmployee = (employee: Employee) => {
     setEditingEmployee(employee)
     setShowEditModal(true)
@@ -632,27 +645,27 @@ const Employees: React.FC = () => {
                     <tr key={`employee-${emp.id}-${index}`} className="hover:bg-gray-50">
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div className="text-xs font-medium text-gray-900 cursor-pointer" onClick={() => openProfileModal(emp)} title="Click to view employee profile and work statistics">
-                          {typeof emp.name === 'string' ? emp.name : emp.name?.toString() || 'Unknown'}
+                          {safeString(emp.name, 'Unknown')}
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div className="text-xs text-gray-900">
-                          {typeof emp.email === 'string' ? emp.email : emp.email?.toString() || 'No email'}
+                          {safeString(emp.email, 'No email')}
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div className="text-xs text-gray-900">
-                          {typeof emp.phone === 'string' ? emp.phone : emp.phone?.toString() || 'No phone'}
+                          {safeString(emp.phone, 'No phone')}
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <span className="inline-flex px-1.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-800">
-                          {typeof emp.destination === 'string' ? emp.destination : emp.destination?.toString() || 'Not assigned'}
+                          {safeString(emp.destination, 'Not assigned')}
                         </span>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <span className="inline-flex px-1.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-800 capitalize">
-                          {typeof emp.role === 'string' ? emp.role : emp.role?.toString() || 'Employee'}
+                          {safeString(emp.role, 'Employee')}
                         </span>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
@@ -1139,21 +1152,21 @@ const Employees: React.FC = () => {
                 </h3>
                 
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <p className="text-sm text-gray-600">
-                    <strong>Name:</strong> {typeof employeeToDelete.name === 'string' ? employeeToDelete.name : employeeToDelete.name?.toString() || 'Unknown'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Email:</strong> {typeof employeeToDelete.email === 'string' ? employeeToDelete.email : employeeToDelete.email?.toString() || 'No email'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Phone:</strong> {typeof employeeToDelete.phone === 'string' ? employeeToDelete.phone : employeeToDelete.phone?.toString() || 'No phone'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Role:</strong> {typeof employeeToDelete.role === 'string' ? employeeToDelete.role : employeeToDelete.role?.toString() || 'Employee'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Status:</strong> {typeof employeeToDelete.status === 'string' ? employeeToDelete.status : employeeToDelete.status?.toString() || 'Active'}
-                  </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Name:</strong> {safeString(employeeToDelete.name, 'Unknown')}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Email:</strong> {safeString(employeeToDelete.email, 'No email')}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Phone:</strong> {safeString(employeeToDelete.phone, 'No phone')}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Role:</strong> {safeString(employeeToDelete.role, 'Employee')}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Status:</strong> {safeString(employeeToDelete.status, 'Active')}
+                </p>
                 </div>
                 
                 <p className="text-sm text-gray-500 mb-6">
@@ -1192,17 +1205,15 @@ const Employees: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <div className="h-10 w-10 bg-white/20 rounded-full flex items-center justify-center">
                     <span className="text-lg font-semibold text-white">
-                      {typeof selectedEmployee.name === 'string' 
-                        ? selectedEmployee.name.split(' ').map(n => n[0]).join('') 
-                        : 'U'}
+                      {safeString(selectedEmployee.name, 'Unknown').split(' ').filter(Boolean).map(n => n[0].toUpperCase()).join('') || 'U'}
                     </span>
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-white">
-                      {typeof selectedEmployee.name === 'string' ? selectedEmployee.name : selectedEmployee.name?.toString() || 'Unknown'}
+                      {safeString(selectedEmployee.name, 'Unknown')}
                     </h3>
                     <p className="text-white/80 text-sm">
-                      {typeof selectedEmployee.email === 'string' ? selectedEmployee.email : selectedEmployee.email?.toString() || 'No email'}
+                      {safeString(selectedEmployee.email, 'No email')}
                     </p>
                   </div>
                 </div>
@@ -1235,7 +1246,7 @@ const Employees: React.FC = () => {
                       <div className="text-xl font-bold text-slate-800">
                         {typeof employeeStats.overview.totalLeadsAssigned === 'number' 
                           ? employeeStats.overview.totalLeadsAssigned 
-                          : employeeStats.overview.totalLeadsAssigned?.toString() || '0'}
+                          : safeString(employeeStats.overview.totalLeadsAssigned, '0')}
                       </div>
                       <div className="text-xs text-slate-600">Total Leads</div>
                     </div>
@@ -1243,7 +1254,7 @@ const Employees: React.FC = () => {
                       <div className="text-xl font-bold text-slate-800">
                         {typeof employeeStats.overview.totalBookings === 'number' 
                           ? employeeStats.overview.totalBookings 
-                          : employeeStats.overview.totalBookings?.toString() || '0'}
+                          : safeString(employeeStats.overview.totalBookings, '0')}
                       </div>
                       <div className="text-xs text-slate-600">Bookings</div>
                     </div>
@@ -1251,7 +1262,7 @@ const Employees: React.FC = () => {
                       <div className="text-xl font-bold text-slate-800">
                         {typeof employeeStats.overview.conversionRate === 'number' 
                           ? `${employeeStats.overview.conversionRate}%` 
-                          : `${employeeStats.overview.conversionRate?.toString() || '0'}%`}
+                          : `${safeString(employeeStats.overview.conversionRate, '0')}%`}
                       </div>
                       <div className="text-xs text-slate-600">Conversion Rate</div>
                     </div>
@@ -1259,7 +1270,7 @@ const Employees: React.FC = () => {
                       <div className="text-xl font-bold text-slate-800">
                         ₹{typeof employeeStats.overview.totalRevenue === 'number' 
                           ? employeeStats.overview.totalRevenue.toLocaleString() 
-                          : employeeStats.overview.totalRevenue?.toString() || '0'}
+                          : safeString(employeeStats.overview.totalRevenue, '0')}
                       </div>
                       <div className="text-xs text-slate-600">Revenue</div>
                     </div>
@@ -1274,7 +1285,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.leads.byStatus.new === 'number' 
                               ? employeeStats.leads.byStatus.new 
-                              : employeeStats.leads.byStatus.new?.toString() || '0'}
+                              : safeString(employeeStats.leads.byStatus.new, '0')}
                           </div>
                           <div className="text-xs text-slate-600">New</div>
                         </div>
@@ -1282,7 +1293,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.leads.byStatus.contacted === 'number' 
                               ? employeeStats.leads.byStatus.contacted 
-                              : employeeStats.leads.byStatus.contacted?.toString() || '0'}
+                              : safeString(employeeStats.leads.byStatus.contacted, '0')}
                           </div>
                           <div className="text-xs text-slate-600">Contacted</div>
                         </div>
@@ -1290,7 +1301,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.leads.byStatus.converted === 'number' 
                               ? employeeStats.leads.byStatus.converted 
-                              : employeeStats.leads.byStatus.converted?.toString() || '0'}
+                              : safeString(employeeStats.leads.byStatus.converted, '0')}
                           </div>
                           <div className="text-xs text-slate-600">Converted</div>
                         </div>
@@ -1304,7 +1315,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.bookings.byStatus.pending === 'number' 
                               ? employeeStats.bookings.byStatus.pending 
-                              : employeeStats.bookings.byStatus.pending?.toString() || '0'}
+                              : safeString(employeeStats.bookings.byStatus.pending, '0')}
                           </div>
                           <div className="text-xs text-slate-600">Pending</div>
                         </div>
@@ -1312,7 +1323,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.bookings.byStatus.confirmed === 'number' 
                               ? employeeStats.bookings.byStatus.confirmed 
-                              : employeeStats.bookings.byStatus.confirmed?.toString() || '0'}
+                              : safeString(employeeStats.bookings.byStatus.confirmed, '0')}
                           </div>
                           <div className="text-xs text-slate-600">Confirmed</div>
                         </div>
@@ -1320,7 +1331,7 @@ const Employees: React.FC = () => {
                           <div className="text-lg font-bold text-slate-800">
                             {typeof employeeStats.bookings.byStatus.cancelled === 'number' 
                               ? employeeStats.bookings.byStatus.cancelled 
-                              : employeeStats.bookings.byStatus.cancelled?.toString() || '0'}
+                              : safeString(employeeStats.bookings.byStatus.cancelled, '0')}
                           </div>
                           <div className="text-xs text-slate-600">Cancelled</div>
                         </div>
@@ -1337,10 +1348,10 @@ const Employees: React.FC = () => {
                           employeeStats.leads.recent.slice(0, 3).map((lead: any, index: number) => (
                             <div key={`lead-${lead.id || index}`} className="bg-white p-2 rounded text-xs">
                               <div className="font-medium text-slate-800">
-                                {typeof lead.name === 'string' ? lead.name : lead.name?.toString() || 'Unknown Lead'}
+                                {safeString(lead.name, 'Unknown Lead')}
                               </div>
                               <div className="text-slate-600">
-                                {typeof lead.destination === 'string' ? lead.destination : lead.destination?.toString() || 'No destination'}
+                                {safeString(lead.destination, 'No destination')}
                               </div>
                             </div>
                           ))
@@ -1357,10 +1368,10 @@ const Employees: React.FC = () => {
                           employeeStats.bookings.recent.slice(0, 3).map((booking: any, index: number) => (
                             <div key={`booking-${booking.id || index}`} className="bg-white p-2 rounded text-xs">
                               <div className="font-medium text-slate-800">
-                                {typeof booking.customer === 'string' ? booking.customer : booking.customer?.toString() || 'Unknown Customer'}
+                                {safeString(booking.customer, 'Unknown Customer')}
                               </div>
                               <div className="text-slate-600">
-                                ₹{typeof booking.amount === 'number' ? booking.amount.toLocaleString() : booking.amount?.toString() || '0'}
+                                ₹{typeof booking.amount === 'number' ? booking.amount.toLocaleString() : safeString(booking.amount, '0')}
                               </div>
                             </div>
                           ))
