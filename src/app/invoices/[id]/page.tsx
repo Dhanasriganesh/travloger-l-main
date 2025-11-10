@@ -10,7 +10,7 @@ async function fetchJSON(url: string) {
 
 export default async function InvoicePage({ params }: { params: { id: string } }) {
   const queryId = params.id
-  const hdr = headers()
+  const hdr = await headers()
   const host = hdr.get('host') || ''
   const proto = hdr.get('x-forwarded-proto') || (host.startsWith('localhost') ? 'http' : 'https')
   const base = `${proto}://${host}`
