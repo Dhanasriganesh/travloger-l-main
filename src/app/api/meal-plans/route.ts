@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error
+    ? error.message
+    : typeof error === 'string'
+      ? error
+      : 'Unexpected error'
+
 // GET all meal plans
 export async function GET() {
   const dbUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
@@ -103,9 +110,9 @@ export async function GET() {
           ORDER BY created_at DESC
         `)
     return NextResponse.json({ mealPlans: result.rows })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Meal Plans GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -155,9 +162,9 @@ export async function POST(request: Request) {
       mealPlan: result.rows[0],
       message: 'Meal plan created successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Meal Plans POST error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -217,9 +224,9 @@ export async function PUT(request: Request) {
       mealPlan: result.rows[0],
       message: 'Meal plan updated successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Meal Plans PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -254,9 +261,9 @@ export async function DELETE(request: Request) {
     }
     
     return NextResponse.json({ message: 'Meal plan deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Meal Plans DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
