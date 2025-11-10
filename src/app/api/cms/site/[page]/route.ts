@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabaseServer'
 
 // Site-wide CMS storage
@@ -24,9 +24,13 @@ async function ensureTable() {
   } catch {}
 }
 
-export async function GET(request: Request, { params }: { params: { page: string } }) {
+type RouteContext = {
+  params: Promise<{ page: string }>
+}
+
+export async function GET(request: NextRequest, context: RouteContext) {
+  const { page } = await context.params
   try {
-    const page = params?.page
     if (!page) return NextResponse.json({ error: 'page required' }, { status: 400 })
 
     await ensureTable()
@@ -50,9 +54,9 @@ export async function GET(request: Request, { params }: { params: { page: string
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { page: string } }) {
+export async function PUT(request: NextRequest, context: RouteContext) {
+  const { page } = await context.params
   try {
-    const page = params?.page
     if (!page) return NextResponse.json({ error: 'page required' }, { status: 400 })
 
     await ensureTable()
