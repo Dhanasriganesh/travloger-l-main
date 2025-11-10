@@ -77,7 +77,7 @@ export async function GET() {
     return NextResponse.json({ activities: result.rows })
   } catch (error) {
     console.error('Activities GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Activities POST error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -179,7 +179,7 @@ export async function PUT(request: Request) {
     })
   } catch (error) {
     console.error('Activities PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -216,7 +216,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: 'Activity deleted successfully' })
   } catch (error) {
     console.error('Activities DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   } finally {
     await client.end()
   }
