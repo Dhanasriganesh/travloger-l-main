@@ -55,9 +55,15 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     }
     
     return NextResponse.json({ itinerary: result.rows[0] })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Itinerary GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : 'Unexpected error'
+    return NextResponse.json({ error: message }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -207,9 +213,15 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     }
     
     return NextResponse.json({ itinerary: result.rows[0] })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Itinerary PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : 'Unexpected error'
+    return NextResponse.json({ error: message }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -241,9 +253,15 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
     }
     
     return NextResponse.json({ message: 'Itinerary deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Itinerary DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : 'Unexpected error'
+    return NextResponse.json({ error: message }, { status: 500 })
   } finally {
     await client.end()
   }
