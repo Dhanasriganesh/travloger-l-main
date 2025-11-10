@@ -128,7 +128,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ itinerary }) => {
       })
     }
     if (events.length && hotels.length) loadRates()
-  }, [events, hotels])
+  }, [events, hotels, hotelRatesByHotel])
 
   const dateDiffNights = (start: string, end: string) => {
     if (!start || !end) return 1
@@ -279,7 +279,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ itinerary }) => {
     })
 
     return serviceItems
-  }, [events, days])
+  }, [events, days, hotels, hotelRatesByHotel])
 
   const totalNet = useMemo(() => {
     const sum = services.reduce((sum, service) => {
