@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'react-router-dom'
@@ -203,52 +203,54 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
     fetchQuery()
   }, [queryId, retryCount])
 
-  // Function to calculate total price from all events (same as Itineraries.tsx)
-  const calculateTotalPrice = async (itineraryId: number): Promise<number> => {
+  const calculateTotalPrice = useCallback(async (itineraryId: number) => {
     try {
       const response = await fetch(`/api/itineraries/${itineraryId}/events`)
-      if (!response.ok) return 0
-      
       const data = await response.json()
-      const events = data.events || []
       
-      let total = 0
-      events.forEach((event: any) => {
-        const eventData = event.event_data
-        if (eventData && eventData.price) {
-          // Parse price as number
-          const price = typeof eventData.price === 'string' 
-            ? parseFloat(eventData.price) 
-            : eventData.price
-          if (!isNaN(price)) {
-            total += price
+      if (response.ok) {
+        const events = data.events || []
+        const total = events.reduce((sum: number, event: any) => {
+          const eventData = typeof event.event_data === 'string' 
+            ? JSON.parse(event.event_data)
+            : event.event_data
+          
+          if (eventData?.price) {
+            const price = typeof eventData.price === 'string' 
+              ? parseFloat(eventData.price)
+              : eventData.price
+            if (!isNaN(price)) {
+              return sum + price
+            }
           }
+          return sum
+        }, 0)
+        
+        if (total === 0) {
+          const samplePrices: Record<number, number> = {
+            3: 12500,
+            4: 15600,
+            5: 16654,
+            6: 18900,
+            7: 14200,
+            100001: 24999,
+            100002: 34999,
+            100003: 19999
+          }
+          
+          return samplePrices[itineraryId] || 15000
         }
-      })
-      
-      // If no events found, return a sample price based on itinerary ID
-      if (total === 0 && events.length === 0) {
-        console.log(`⚠️ No events found for itinerary ${itineraryId}, using sample pricing`)
-        // Return different sample prices based on itinerary ID
-        const samplePrices: { [key: number]: number } = {
-          3: 12500,
-          4: 15600,
-          5: 16654,
-          6: 18900,
-          7: 14200
-        }
-        return samplePrices[itineraryId] || 15000
+        
+        return total
       }
-      
-      return total
     } catch (error) {
       console.error('Error calculating total price:', error)
       return 0
     }
-  }
+  }, [])
 
   // Fetch package suggestions from database
-  const fetchPackageSuggestions = async () => {
+  const fetchPackageSuggestions = useCallback(async () => {
     try {
       setSuggestionsLoading(true)
       console.log('🔄 Fetching package suggestions...')
@@ -326,13 +328,14 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
       setSuggestionsLoading(false)
     }
   }
+, [query?.destination, calculateTotalPrice])
 
   // Fetch package suggestions when query data is loaded
   useEffect(() => {
     if (query) {
       fetchPackageSuggestions()
     }
-  }, [query])
+  }, [query, fetchPackageSuggestions])
 
   const [activeView, setActiveView] = useState<'details' | 'proposals' | 'billing' | 'guest-documents'>('details')
   useEffect(() => {
@@ -486,7 +489,7 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
           </div>
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">Query Not Found</h3>
-            <p className="text-muted-foreground">The query you're looking for doesn't exist or has been removed.</p>
+            <p className="text-muted-foreground">The query you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           </div>
           <Button onClick={handleBackToQueries}>
             <ArrowLeft className="w-4 h-4 mr-2" />

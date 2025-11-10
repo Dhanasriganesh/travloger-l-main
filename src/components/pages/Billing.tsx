@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
 import { Badge } from '../ui/badge'
@@ -81,21 +81,7 @@ const Billing: React.FC<BillingProps> = ({ queryId, queryData }) => {
   // Not Scheduled = Confirmed - (Scheduled + Paid)
   const notScheduledAmount = Math.max(confirmedProposalsAmount - scheduledOrPaidAmount, 0)
 
-  useEffect(() => {
-    fetchPayments()
-    fetchConfirmedProposals()
-  }, [queryId])
-
-  // Persist invoice generation per query and amount
-  useEffect(() => {
-    const key = `invoice_generated_${queryId}_${Math.round(confirmedProposalsAmount)}`
-    try {
-      const val = localStorage.getItem(key)
-      setInvoiceGenerated(val === '1')
-    } catch {}
-  }, [queryId, confirmedProposalsAmount])
-
-  const fetchPayments = async () => {
+  const fetchPayments = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/query-payments?queryId=${queryId}`)
@@ -109,9 +95,9 @@ const Billing: React.FC<BillingProps> = ({ queryId, queryData }) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [queryId])
 
-  const fetchConfirmedProposals = async () => {
+  const fetchConfirmedProposals = useCallback(async () => {
     try {
       console.log('🔍 Fetching confirmed proposals for queryId:', queryId)
       const response = await fetch(`/api/confirmed-proposals?queryId=${queryId}`)
@@ -129,7 +115,21 @@ const Billing: React.FC<BillingProps> = ({ queryId, queryData }) => {
     } catch (error) {
       console.error('Error fetching confirmed proposals:', error)
     }
-  }
+  }, [queryId])
+
+  useEffect(() => {
+    fetchPayments()
+    fetchConfirmedProposals()
+  }, [fetchPayments, fetchConfirmedProposals])
+
+  // Persist invoice generation per query and amount
+  useEffect(() => {
+    const key = `invoice_generated_${queryId}_${Math.round(confirmedProposalsAmount)}`
+    try {
+      const val = localStorage.getItem(key)
+      setInvoiceGenerated(val === '1')
+    } catch {}
+  }, [queryId, confirmedProposalsAmount])
 
   const handleDeletePayment = async (id: number) => {
     if (!confirm('Are you sure you want to delete this payment?')) {
