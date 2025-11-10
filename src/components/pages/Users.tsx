@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 // Type definitions
 interface Query {
@@ -56,7 +56,7 @@ const Queries: React.FC = () => {
   })
 
   // Fetch queries data
-  const fetchQueries = async () => {
+  const fetchQueries = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/leads')
@@ -94,7 +94,7 @@ const Queries: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // Calculate statistics
   const calculateStats = (queryList: Query[]) => {
@@ -115,7 +115,7 @@ const Queries: React.FC = () => {
 
   useEffect(() => {
     fetchQueries()
-  }, [])
+  }, [fetchQueries])
 
   // Filter queries based on status
   const getFilteredQueries = (): Query[] => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import Image from 'next/image'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
@@ -38,6 +39,7 @@ interface FinalPageProps {
 const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
   const [events, setEvents] = useState<EventData[]>([])
   const [days, setDays] = useState<DayData[]>([])
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   const [hotels, setHotels] = useState<any[]>([])
   const [transfers, setTransfers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -514,18 +516,19 @@ const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
               {/* Hotel Image */}
               {(() => {
                 const hotel = hotels.find(h => h.name === eventData.hotelName)
-                const hasImage = hotel?.icon_url && hotel.icon_url.trim() !== ''
+                const imageUrl = hotel?.icon_url?.trim()
                 
-                if (hasImage) {
+                if (imageUrl && !imageErrors[imageUrl]) {
                   return (
-                    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                      <img 
-                        src={hotel.icon_url} 
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                      <Image 
+                        src={imageUrl} 
                         alt={eventData.hotelName || 'Hotel'}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                        unoptimized
+                        onError={() => setImageErrors(prev => ({ ...prev, [imageUrl]: true }))}
                       />
                     </div>
                   )
@@ -562,18 +565,19 @@ const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
               {/* Transfer Image */}
               {(() => {
                 const transfer = transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)
-                const hasImage = transfer?.photo_url && transfer.photo_url.trim() !== ''
+                const imageUrl = transfer?.photo_url?.trim()
                 
-                if (hasImage) {
+                if (imageUrl && !imageErrors[imageUrl]) {
                   return (
-                    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                      <img 
-                        src={transfer.photo_url} 
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                      <Image 
+                        src={imageUrl} 
                         alt={eventData.name || 'Transfer'}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                        unoptimized
+                        onError={() => setImageErrors(prev => ({ ...prev, [imageUrl]: true }))}
                       />
                     </div>
                   )

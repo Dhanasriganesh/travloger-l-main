@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
@@ -922,7 +923,16 @@ const Hotels: React.FC = () => {
                       <div className="mt-2 inline-flex items-center gap-2 px-2 py-1 border border-gray-300 rounded-md bg-gray-50">
                         {previewUrl ? (
                           // Small thumbnail preview
-                          <img src={previewUrl} alt="Preview" className="w-6 h-6 rounded object-cover" />
+                          <div className="relative w-6 h-6">
+                            <Image 
+                              src={previewUrl} 
+                              alt="Preview" 
+                              fill 
+                              sizes="24px" 
+                              className="rounded object-cover" 
+                              unoptimized 
+                            />
+                          </div>
                         ) : (
                           <span className="text-xs">📷</span>
                         )}
