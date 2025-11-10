@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 import ViewQuotationModal from '../ui/ViewQuotationModal'
 
 // Proposals page that fetches itineraries from database like ItineraryBuilder/Itineraries
@@ -10,6 +11,8 @@ const Proposals = ({ leadId }) => {
   const [error, setError] = useState(null)
   const [confirming, setConfirming] = useState(null) // Track which proposal is being confirmed
   const [showQuotationModal, setShowQuotationModal] = useState(false)
+  const [imageErrors, setImageErrors] = useState({})
+  const fallbackImage = 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=1200&auto=format&fit=crop'
   const [selectedItineraryId, setSelectedItineraryId] = useState(null)
 
   useEffect(() => {
@@ -255,20 +258,15 @@ const Proposals = ({ leadId }) => {
         {proposals.map((p) => (
           <div key={p.id} className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
             <div className="relative h-32 w-full overflow-hidden">
-              <img 
-                src={p.image} 
-                alt={p.title} 
-                className="h-full w-full object-cover" 
-                onError={(e) => {
-                  console.log('❌ Image failed to load for itinerary:', p.id)
-                  console.log('❌ Image URL:', p.image)
-                  console.log('❌ Image URL length:', p.image?.length)
-                  console.log('❌ Image URL starts with data:', p.image?.startsWith('data:'))
-                  e.target.src = 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=1200&auto=format&fit=crop'
-                }}
-                onLoad={() => {
-                  console.log('✅ Image loaded successfully for itinerary:', p.id)
-                  console.log('✅ Image URL:', p.image)
+              <Image
+                src={imageErrors[p.id] ? fallbackImage : p.image}
+                alt={p.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 384px"
+                className="object-cover"
+                unoptimized
+                onError={() => {
+                  setImageErrors(prev => ({ ...prev, [p.id]: true }))
                 }}
               />
             </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'react-router-dom'
 import { Button } from '../ui/button'
@@ -73,6 +74,7 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [packageSuggestions, setPackageSuggestions] = useState<any[]>([])
   const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+  const [suggestionImageErrors, setSuggestionImageErrors] = useState<Record<number, boolean>>({})
   const maxRetries = 3
 
   // Edit state management
@@ -1034,19 +1036,27 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
                         <tr key={suggestion.id} className="border-t hover:bg-gray-50">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
-                              <img 
-                                src={suggestion.cover_photo ? 
-                                  (suggestion.cover_photo.startsWith('data:') ? 
-                                    suggestion.cover_photo : 
-                                    `data:image/jpeg;base64,${suggestion.cover_photo}`) : 
-                                  'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=100&auto=format&fit=crop'
-                                } 
-                                alt={suggestion.title} 
-                                className="w-12 h-12 rounded object-cover"
-                                onError={(e) => {
-                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=100&auto=format&fit=crop'
-                                }}
-                              />
+                              <div className="relative w-12 h-12 flex-shrink-0">
+                                <Image
+                                  src={
+                                    suggestionImageErrors[suggestion.id]
+                                      ? 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=100&auto=format&fit=crop'
+                                      : suggestion.cover_photo
+                                        ? (suggestion.cover_photo.startsWith('data:')
+                                          ? suggestion.cover_photo
+                                          : `data:image/jpeg;base64,${suggestion.cover_photo}`)
+                                        : 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?q=80&w=100&auto=format&fit=crop'
+                                  }
+                                  alt={suggestion.title}
+                                  fill
+                                  sizes="48px"
+                                  className="rounded object-cover"
+                                  unoptimized
+                                  onError={() =>
+                                    setSuggestionImageErrors(prev => ({ ...prev, [suggestion.id]: true }))
+                                  }
+                                />
+                              </div>
                               <div>
                                 <div className="font-medium text-gray-900">{suggestion.title}</div>
                                 <div className="text-xs text-gray-500">ID: {suggestion.id} - {suggestion.destinations}</div>

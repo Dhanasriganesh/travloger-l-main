@@ -57,6 +57,10 @@ const Employeedashboard: React.FC = () => {
     featured: boolean
     image?: string
   } | null>(null)
+  const [selectedImageError, setSelectedImageError] = useState<boolean>(false)
+  useEffect(() => {
+    setSelectedImageError(false)
+  }, [selected?.id, showDetails])
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
   const [expandedLeads, setExpandedLeads] = useState<Set<number>>(new Set())
   const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false)
@@ -1832,9 +1836,18 @@ const Employeedashboard: React.FC = () => {
                       </button>
                     </div>
                     <div className="h-40 bg-gray-100 mb-3 flex items-center justify-center">
-                      {selected.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={selected.image} alt={selected.name} className="w-full h-full object-cover" />
+                      {selected.image && !selectedImageError ? (
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={selected.image}
+                            alt={selected.name}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 480px"
+                            className="object-cover"
+                            unoptimized
+                            onError={() => setSelectedImageError(true)}
+                          />
+                        </div>
                       ) : (
                         <span className="text-gray-400 text-sm">No Image</span>
                       )}
