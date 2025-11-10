@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
@@ -49,7 +49,7 @@ const Itineraries: React.FC = () => {
   const navigate = useNavigate()
 
   // Function to calculate total price from all events
-  const calculateTotalPrice = async (itineraryId: number): Promise<number> => {
+  const calculateTotalPrice = useCallback(async (itineraryId: number): Promise<number> => {
     try {
       const response = await fetch(`/api/itineraries/${itineraryId}/events`)
       if (!response.ok) return 0
@@ -76,7 +76,7 @@ const Itineraries: React.FC = () => {
       console.error('Error calculating total price:', error)
       return 0
     }
-  }
+  }, [])
 
   const [form, setForm] = useState({
     name: '',
@@ -88,7 +88,7 @@ const Itineraries: React.FC = () => {
     notes: ''
   })
 
-  const fetchRows = async () => {
+  const fetchRows = useCallback(async () => {
     try {
       setLoading(true)
       const res = await fetch('/api/itineraries')
@@ -114,9 +114,9 @@ const Itineraries: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [calculateTotalPrice])
 
-  const fetchDestinations = async () => {
+  const fetchDestinations = useCallback(async () => {
     try {
       const res = await fetch('/api/destinations')
       const data = await res.json().catch(() => ({}))
@@ -126,7 +126,7 @@ const Itineraries: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch destinations:', error)
     }
-  }
+  }, [])
 
   // Ensure all destinations exist in master before creating/updating itinerary
   const ensureDestinationsExist = async (names: string[]): Promise<void> => {
@@ -157,7 +157,7 @@ const Itineraries: React.FC = () => {
   useEffect(() => { 
     fetchRows()
     fetchDestinations()
-  }, [])
+  }, [fetchRows, fetchDestinations])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()

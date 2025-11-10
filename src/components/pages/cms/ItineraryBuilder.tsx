@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import Image from 'next/image'
 import { useParams, Link } from 'react-router-dom'
 import QuillEditor from './QuillEditor'
 import PricingPage from './PricingPage'
@@ -46,6 +47,8 @@ const ItineraryBuilder: React.FC = () => {
   const [days, setDays] = useState<any[]>([])
   const [selectedDayId, setSelectedDayId] = useState<number | null>(null)
   const [events, setEvents] = useState<any[]>([])
+  const [transferImageErrors, setTransferImageErrors] = useState<Record<string, boolean>>({})
+  const [hotelImageErrors, setHotelImageErrors] = useState<Record<string, boolean>>({})
   
   // Group events by day
   const eventsByDay = useMemo(() => {
@@ -1852,27 +1855,30 @@ const ItineraryBuilder: React.FC = () => {
                                 {/* Inner transfer image */}
                                 <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center relative">
                                   {(() => {
-                                    // Find transfer from database to get photo
                                     const transfer = transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)
-                                    if (transfer?.photo_url) {
+                                    const photoUrl = transfer?.photo_url?.trim()
+                                    if (photoUrl && !transferImageErrors[photoUrl]) {
                                       return (
-                                        <img 
-                                          src={transfer.photo_url} 
+                                        <Image 
+                                          src={photoUrl} 
                                           alt={eventData.name}
-                                          className="w-full h-full object-cover rounded"
-                                          onError={(e) => {
-                                            e.currentTarget.style.display = 'none'
-                                            const nextElement = e.currentTarget.nextElementSibling as HTMLElement
-                                            if (nextElement) {
-                                              nextElement.style.display = 'flex'
-                                            }
+                                          fill
+                                          sizes="32px"
+                                          className="object-cover rounded"
+                                          unoptimized
+                                          onError={() => {
+                                            setTransferImageErrors(prev => ({ ...prev, [photoUrl]: true }))
                                           }}
                                         />
                                       )
                                     }
                                     return null
                                   })()}
-                                  <div className="w-full h-full bg-gray-300 rounded flex items-center justify-center" style={{display: transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)?.photo_url ? 'none' : 'flex'}}>
+                                  <div className="w-full h-full bg-gray-300 rounded flex items-center justify-center" style={{display: (() => {
+                                    const transfer = transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)
+                                    const photoUrl = transfer?.photo_url?.trim()
+                                    return photoUrl && !transferImageErrors[photoUrl] ? 'none' : 'flex'
+                                  })()}}>
                                     <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                                       <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
                                       <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z"/>
@@ -1987,22 +1993,18 @@ const ItineraryBuilder: React.FC = () => {
                                   {/* Check if hotel has an image */}
                                   {(() => {
                                     const hotel = hotels.find(h => h.name === eventData.hotelName)
-                                    const hasImage = hotel?.icon_url && hotel.icon_url.trim() !== ''
-                                    
-                                    if (hasImage) {
+                                    const iconUrl = hotel?.icon_url?.trim()
+                                    if (iconUrl && !hotelImageErrors[iconUrl]) {
                                       return (
-                                        <img 
-                                          src={hotel.icon_url} 
+                                        <Image 
+                                          src={iconUrl} 
                                           alt={eventData.hotelName}
-                                          className="w-full h-full object-cover rounded"
-                                          onError={(e) => {
-                                            // Fallback to icon if image fails to load
-                                            const target = e.currentTarget as HTMLImageElement
-                                            target.style.display = 'none'
-                                            const nextElement = target.nextElementSibling as HTMLElement
-                                            if (nextElement) {
-                                              nextElement.style.display = 'flex'
-                                            }
+                                          fill
+                                          sizes="32px"
+                                          className="object-cover rounded"
+                                          unoptimized
+                                          onError={() => {
+                                            setHotelImageErrors(prev => ({ ...prev, [iconUrl]: true }))
                                           }}
                                         />
                                       )
@@ -3727,11 +3729,15 @@ const ItineraryBuilder: React.FC = () => {
               {coverPhoto && (
                 <div className="space-y-2">
                   <div className="text-sm font-medium text-gray-700">Current Cover Photo:</div>
-                <div className="relative" ref={eventMenuRef}>
-                    <img
+                <div className="relative w-full h-32" ref={eventMenuRef}>
+                    <Image
                       src={coverPhoto}
                       alt="Cover preview"
-                      className="w-full h-32 object-cover rounded-lg"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 640px"
+                      className="object-cover rounded-lg"
+                      unoptimized
+                      onError={() => setCoverPhoto(null)}
                     />
                     <button
                       onClick={() => {

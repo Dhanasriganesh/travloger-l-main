@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { Card, CardContent } from '../../ui/card'
@@ -724,14 +725,30 @@ const ItineraryTemplate: React.FC = () => {
                     />
                     {imagePreview && (
                       <div className="mt-2">
-                        <img src={imagePreview} alt="Preview" className="h-32 w-auto rounded-md border border-gray-300" />
+                        <Image
+                          src={imagePreview}
+                          alt="Preview"
+                          width={256}
+                          height={128}
+                          sizes="(max-width: 768px) 100vw, 256px"
+                          className="h-32 w-auto rounded-md border border-gray-300 object-contain bg-white"
+                          unoptimized
+                        />
                       </div>
                     )}
                     {formData.images.length > 0 && !imagePreview && (
                       <div className="mt-2 space-y-2">
                         {formData.images.map((img, idx) => (
                           <div key={idx} className="relative inline-block">
-                            <img src={img} alt={`Image ${idx + 1}`} className="h-32 w-auto rounded-md border border-gray-300" />
+                            <Image
+                              src={img}
+                              alt={`Image ${idx + 1}`}
+                              width={256}
+                              height={128}
+                              sizes="(max-width: 768px) 100vw, 256px"
+                              className="h-32 w-auto rounded-md border border-gray-300 object-contain bg-white"
+                              unoptimized
+                            />
                             <button
                               type="button"
                               onClick={() => setFormData({...formData, images: formData.images.filter((_, i) => i !== idx)})}
