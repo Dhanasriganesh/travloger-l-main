@@ -139,7 +139,7 @@ export default async function InvoicePage({ params }: { params: { id: string } }
               <div>Bank Name: HDFC BANK</div>
               <div>Bank Account No. : 50200070247064</div>
               <div>Bank IFSC code: HDFC0001997</div>
-              <div>Account holder's name: TRAVLOGER</div>
+              <div>Account holder&apos;s name: TRAVLOGER</div>
             </div>
           </div>
           <div className="text-base space-y-3">
