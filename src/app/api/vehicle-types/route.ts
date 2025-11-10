@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET all vehicle types
 export async function GET() {
@@ -40,9 +41,9 @@ export async function GET() {
     `)
 
     return NextResponse.json({ vehicleTypes: result.rows })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('VehicleTypes GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -68,9 +69,9 @@ export async function POST(request: Request) {
     `, [vehicleType, capacity || 4, description || '', notes || '', status || 'Active'])
 
     return NextResponse.json({ vehicleType: result.rows[0], message: 'Vehicle type created successfully' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('VehicleTypes POST error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -101,9 +102,9 @@ export async function PUT(request: Request) {
     if (result.rows.length === 0) return NextResponse.json({ error: 'Vehicle type not found' }, { status: 404 })
 
     return NextResponse.json({ vehicleType: result.rows[0], message: 'Vehicle type updated successfully' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('VehicleTypes PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -125,9 +126,9 @@ export async function DELETE(request: Request) {
     if (result.rowCount === 0) return NextResponse.json({ error: 'Vehicle type not found' }, { status: 404 })
 
     return NextResponse.json({ message: 'Vehicle type deleted successfully' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('VehicleTypes DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

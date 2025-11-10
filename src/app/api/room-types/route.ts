@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET all room types
 export async function GET() {
@@ -47,9 +48,9 @@ export async function GET() {
     `)
     
     return NextResponse.json({ roomTypes: result.rows })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Room Types GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -86,9 +87,9 @@ export async function POST(request: Request) {
       roomType: result.rows[0],
       message: 'Room type created successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Room Types POST error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -134,9 +135,9 @@ export async function PUT(request: Request) {
       roomType: result.rows[0],
       message: 'Room type updated successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Room Types PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -171,9 +172,9 @@ export async function DELETE(request: Request) {
     }
     
     return NextResponse.json({ message: 'Room type deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Room Types DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

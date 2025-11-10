@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
 import { headers } from 'next/headers'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET hotel rates
 export async function GET(request: Request) {
@@ -132,10 +133,10 @@ export async function GET(request: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Hotel rates GET error:', error)
     return new NextResponse(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ error: getErrorMessage(error) }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -246,10 +247,10 @@ export async function POST(request: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Hotel rates POST error:', error)
     return new NextResponse(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ error: getErrorMessage(error) }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -388,10 +389,10 @@ export async function PUT(request: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Hotel rates PUT error:', error)
     return new NextResponse(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ error: getErrorMessage(error) }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -469,10 +470,10 @@ export async function DELETE(request: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Hotel rates DELETE error:', error)
     return new NextResponse(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ error: getErrorMessage(error) }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' }

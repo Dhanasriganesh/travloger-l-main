@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET /api/confirmed-proposals?queryId={id}
 export async function GET(request: Request) {
@@ -67,7 +68,7 @@ export async function GET(request: Request) {
         }
         
         console.log(`💰 Calculated total price for itinerary ${row.id}: ${totalPrice}`)
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`Error calculating price for itinerary ${row.id}:`, error)
         totalPrice = parseFloat(row.price) || 15000 // Fallback to stored price or default
       }
@@ -100,9 +101,9 @@ export async function GET(request: Request) {
       totalAmount: totalAmount,
       count: confirmedProposals.length
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Confirmed proposals GET error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

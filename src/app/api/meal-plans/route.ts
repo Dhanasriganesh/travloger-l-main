@@ -1,12 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
-
-const getErrorMessage = (error: unknown) =>
-  error instanceof Error
-    ? error.message
-    : typeof error === 'string'
-      ? error
-      : 'Unexpected error'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET all meal plans
 export async function GET() {

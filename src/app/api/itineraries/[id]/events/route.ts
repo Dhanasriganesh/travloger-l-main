@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET /api/itineraries/[id]/events - Fetch all events for an itinerary
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
@@ -38,9 +39,9 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       events: result.rows,
       count: result.rows.length 
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Events GET error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

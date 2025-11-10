@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 const getDbUrl = () => process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
 
@@ -58,9 +59,9 @@ export async function GET() {
       date: r.date
     }))
     return NextResponse.json({ notesInclusions })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
   let body
   try {
     body = await request.json()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions POST - JSON parse error:', error)
     return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
   }
@@ -105,15 +106,17 @@ export async function POST(request: NextRequest) {
       values
     )
     return NextResponse.json({ id: insert.rows[0].id, message: 'Note/Inclusion created' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions POST error:', error)
+    const message = getErrorMessage(error)
+    const errorObject = (typeof error === 'object' && error !== null) ? error as Record<string, unknown> : {}
     console.error('Error details:', {
-      message: error.message,
-      code: error.code,
-      detail: error.detail,
-      hint: error.hint
+      message,
+      code: errorObject.code,
+      detail: errorObject.detail,
+      hint: errorObject.hint
     })
-    return NextResponse.json({ error: error.message || 'Failed to create note/inclusion' }, { status: 500 })
+    return NextResponse.json({ error: message || 'Failed to create note/inclusion' }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -126,7 +129,7 @@ export async function PUT(request: NextRequest) {
   let body
   try {
     body = await request.json()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions PUT - JSON parse error:', error)
     return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
   }
@@ -155,15 +158,17 @@ export async function PUT(request: NextRequest) {
       values
     )
     return NextResponse.json({ message: 'Note/Inclusion updated' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions PUT error:', error)
+    const message = getErrorMessage(error)
+    const errorObject = (typeof error === 'object' && error !== null) ? error as Record<string, unknown> : {}
     console.error('Error details:', {
-      message: error.message,
-      code: error.code,
-      detail: error.detail,
-      hint: error.hint
+      message,
+      code: errorObject.code,
+      detail: errorObject.detail,
+      hint: errorObject.hint
     })
-    return NextResponse.json({ error: error.message || 'Failed to update note/inclusion' }, { status: 500 })
+    return NextResponse.json({ error: message || 'Failed to update note/inclusion' }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -182,9 +187,9 @@ export async function DELETE(request: NextRequest) {
     await ensureTable(client)
     await client.query('DELETE FROM itinerary_notes_inclusions WHERE id = $1', [id])
     return NextResponse.json({ message: 'Note/Inclusion deleted' })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('ItineraryNotesInclusions DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

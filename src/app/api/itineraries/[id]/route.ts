@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET /api/itineraries/[id]
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
@@ -57,13 +58,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     return NextResponse.json({ itinerary: result.rows[0] })
   } catch (error: unknown) {
     console.error('Itinerary GET error:', error)
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === 'string'
-          ? error
-          : 'Unexpected error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -215,13 +210,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     return NextResponse.json({ itinerary: result.rows[0] })
   } catch (error: unknown) {
     console.error('Itinerary PUT error:', error)
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === 'string'
-          ? error
-          : 'Unexpected error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -255,13 +244,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
     return NextResponse.json({ message: 'Itinerary deleted successfully' })
   } catch (error: unknown) {
     console.error('Itinerary DELETE error:', error)
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === 'string'
-          ? error
-          : 'Unexpected error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

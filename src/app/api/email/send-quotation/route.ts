@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 const createTransporter = () => {
   return nodemailer.createTransport({
@@ -158,11 +159,12 @@ export async function POST(request: NextRequest) {
       messageId: info.messageId,
       message: 'Quotation sent successfully'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error sending quotation email:', error)
+    const message = getErrorMessage(error)
     return NextResponse.json({ 
-      error: `Failed to send email: ${error.message}`,
-      details: error.message
+      error: `Failed to send email: ${message}`,
+      details: message
     }, { status: 500 })
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET all activities
 export async function GET() {
@@ -75,9 +76,9 @@ export async function GET() {
     `)
     
     return NextResponse.json({ activities: result.rows })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Activities GET error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -121,9 +122,9 @@ export async function POST(request: Request) {
       activity: result.rows[0],
       message: 'Activity created successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Activities POST error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -177,9 +178,9 @@ export async function PUT(request: Request) {
       activity: result.rows[0],
       message: 'Activity updated successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Activities PUT error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -214,9 +215,9 @@ export async function DELETE(request: Request) {
     }
     
     return NextResponse.json({ message: 'Activity deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Activities DELETE error:', error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

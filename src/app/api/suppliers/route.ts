@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET all suppliers
 export async function GET() {
@@ -133,9 +134,9 @@ export async function GET() {
     `)
     
     return NextResponse.json({ suppliers: result.rows })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Suppliers GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -188,9 +189,9 @@ export async function POST(request: Request) {
       supplier: result.rows[0],
       message: 'Supplier created successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Suppliers POST error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -253,9 +254,9 @@ export async function PUT(request: Request) {
       supplier: result.rows[0],
       message: 'Supplier updated successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Suppliers PUT error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
@@ -290,9 +291,9 @@ export async function DELETE(request: Request) {
     }
     
     return NextResponse.json({ message: 'Supplier deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Suppliers DELETE error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }

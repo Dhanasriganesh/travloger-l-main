@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/app/api/utils/error'
 
 // GET /api/quotation/[id] - Get quotation data for an itinerary
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
@@ -70,8 +71,8 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
           console.log('✅ Found lead data:', lead.name)
         }
       }
-    } catch (error) {
-      console.log('⚠️ Could not fetch lead data:', error.message)
+    } catch (error: unknown) {
+      console.log('⚠️ Could not fetch lead data:', getErrorMessage(error))
     }
     
     // Get events for this itinerary to calculate total price
@@ -196,8 +197,8 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       }))
       
       console.log('✅ Found hotels:', hotels.length)
-    } catch (error) {
-      console.log('⚠️ No hotels table or data:', error.message)
+    } catch (error: unknown) {
+      console.log('⚠️ No hotels table or data:', getErrorMessage(error))
       // Add sample hotel data for demonstration
       hotels = [{
         city: 'Munnar',
@@ -274,9 +275,9 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     
     console.log('✅ Quotation data prepared for itinerary:', itineraryId)
     return NextResponse.json({ quotation: quotationData })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Quotation GET error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
