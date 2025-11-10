@@ -327,8 +327,7 @@ const QueryDetail: React.FC<QueryDetailProps> = ({ queryId: propQueryId, onBack,
     } finally {
       setSuggestionsLoading(false)
     }
-  }
-, [query?.destination, calculateTotalPrice])
+  }, [query?.destination, calculateTotalPrice])
 
   // Fetch package suggestions when query data is loaded
   useEffect(() => {
