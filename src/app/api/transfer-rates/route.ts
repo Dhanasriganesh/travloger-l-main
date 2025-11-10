@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { Client } from 'pg'
+import { getErrorMessage } from '@/lib/error'
 
 // GET all transfer rates for a specific transfer
-export async function GET(request) {
+export async function GET(request: Request) {
   const dbUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
   
   if (!dbUrl) {
@@ -52,16 +53,16 @@ export async function GET(request) {
     `, [transferId])
     
     return NextResponse.json({ rates: result.rows })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Transfer rates GET error:', error)
-    return NextResponse.json({ error: 'Failed to fetch transfer rates' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
 }
 
 // POST - Add new transfer rate
-export async function POST(request) {
+export async function POST(request: Request) {
   const dbUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
   
   if (!dbUrl) {
@@ -91,16 +92,16 @@ export async function POST(request) {
       rate: result.rows[0],
       message: 'Transfer rate added successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Transfer rates POST error:', error)
-    return NextResponse.json({ error: 'Failed to add transfer rate' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
 }
 
 // PUT - Update transfer rate
-export async function PUT(request) {
+export async function PUT(request: Request) {
   const dbUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
   
   if (!dbUrl) {
@@ -136,16 +137,16 @@ export async function PUT(request) {
       rate: result.rows[0],
       message: 'Transfer rate updated successfully'
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Transfer rates PUT error:', error)
-    return NextResponse.json({ error: 'Failed to update transfer rate' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
 }
 
 // DELETE - Remove transfer rate
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   const dbUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL
   
   if (!dbUrl) {
@@ -175,9 +176,9 @@ export async function DELETE(request) {
     }
     
     return NextResponse.json({ message: 'Transfer rate deleted successfully' })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Transfer rates DELETE error:', error)
-    return NextResponse.json({ error: 'Failed to delete transfer rate' }, { status: 500 })
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 })
   } finally {
     await client.end()
   }
