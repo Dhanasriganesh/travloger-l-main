@@ -899,15 +899,21 @@ const Employees: React.FC = () => {
                   />
                   {showCreateDestinationDropdown && filteredCreateDestinations.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {filteredCreateDestinations.map((destination, index) => (
-                        <div
-                          key={`create-dest-${typeof destination === 'object' ? destination.id || index : index}`}
-                          onClick={() => selectCreateDestination(typeof destination === 'object' ? destination.name : destination)}
-                          className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
-                        >
-                          {typeof destination === 'object' ? destination.name : destination}
-                        </div>
-                      ))}
+                      {filteredCreateDestinations.map((destination, index) => {
+                        const destinationName =
+                          typeof destination === 'object' && destination !== null
+                            ? safeString((destination as { name?: string }).name, '')
+                            : safeString(destination, '')
+                        return (
+                          <div
+                            key={`create-dest-${index}-${destinationName}`}
+                            onClick={() => selectCreateDestination(destinationName)}
+                            className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          >
+                            {destinationName || 'Unnamed destination'}
+                          </div>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
@@ -1052,15 +1058,21 @@ const Employees: React.FC = () => {
                   />
                   {showEditDestinationDropdown && filteredEditDestinations.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {filteredEditDestinations.map((destination, index) => (
-                        <div
-                          key={`edit-dest-${typeof destination === 'object' ? destination.id || index : index}`}
-                          onClick={() => selectEditDestination(typeof destination === 'object' ? destination.name : destination)}
-                          className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
-                        >
-                          {typeof destination === 'object' ? destination.name : destination}
-                        </div>
-                      ))}
+                      {filteredEditDestinations.map((destination, index) => {
+                        const destinationName =
+                          typeof destination === 'object' && destination !== null
+                            ? safeString((destination as { name?: string }).name, '')
+                            : safeString(destination, '')
+                        return (
+                          <div
+                            key={`edit-dest-${index}-${destinationName}`}
+                            onClick={() => selectEditDestination(destinationName)}
+                            className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          >
+                            {destinationName || 'Unnamed destination'}
+                          </div>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
