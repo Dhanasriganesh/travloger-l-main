@@ -398,7 +398,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <button
                   onClick={() => setShowLogoutModal(false)}
                   className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-                >
+                > 
                   Cancel
                 </button>
                 <button
