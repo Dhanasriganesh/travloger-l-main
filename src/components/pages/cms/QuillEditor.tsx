@@ -13,6 +13,11 @@ const QuillEditor: React.FC<Props> = ({ value, onChange }) => {
   const editorRef = useRef<HTMLDivElement | null>(null)
   const quillRef = useRef<any>(null)
   const initRef = useRef<boolean>(false)
+  const onChangeRef = useRef(onChange)
+
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -69,8 +74,6 @@ const QuillEditor: React.FC<Props> = ({ value, onChange }) => {
         `
       }
 
-      editor.root.innerHTML = value || ''
-      
       // Auto-resize horizontally based on content
       const autoResize = () => {
         const editorElement = editor.root as HTMLElement
@@ -97,7 +100,7 @@ const QuillEditor: React.FC<Props> = ({ value, onChange }) => {
       }
       
       editor.on('text-change', () => {
-        onChange(editor.root.innerHTML)
+        onChangeRef.current(editor.root.innerHTML)
         // Auto-resize after content changes
         setTimeout(autoResize, 0)
       })

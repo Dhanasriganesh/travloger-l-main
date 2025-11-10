@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { X, Printer, Mail, Camera } from 'lucide-react'
 
 interface QuotationData {
@@ -179,13 +179,7 @@ const ViewQuotationModal: React.FC<ViewQuotationModalProps> = ({
   //   ]
   // }
 
-  useEffect(() => {
-    if (isOpen && itineraryId) {
-      fetchQuotationData()
-    }
-  }, [isOpen, itineraryId])
-
-  const fetchQuotationData = async () => {
+  const fetchQuotationData = useCallback(async () => {
     if (!itineraryId) return
     
     try {
@@ -213,7 +207,13 @@ const ViewQuotationModal: React.FC<ViewQuotationModalProps> = ({
     } finally {
       setLoading(false)
     }
-  }
+  }, [itineraryId, queryId])
+
+  useEffect(() => {
+    if (isOpen && itineraryId) {
+      fetchQuotationData()
+    }
+  }, [isOpen, itineraryId, fetchQuotationData])
 
   const handlePrint = () => {
     window.print()
