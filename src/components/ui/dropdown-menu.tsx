@@ -112,7 +112,7 @@ const DropdownMenuItem = React.forwardRef<
   
   const { setOpen } = context
   
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     onSelect?.()
     setOpen(false)
     onClick?.(e)
