@@ -259,12 +259,13 @@ const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
               const hotel = hotels.find(h => h.name === eventData.hotelName)
               if (hotel?.icon_url) {
                 try {
-                  const hotelImg = new Image()
+                  const hotelImg = document.createElement('img')
                   hotelImg.crossOrigin = 'anonymous'
                   hotelImg.src = hotel.icon_url
                   
-                  await new Promise((resolve) => {
-                    hotelImg.onload = resolve
+                  await new Promise<void>((resolve, reject) => {
+                    hotelImg.onload = () => resolve()
+                    hotelImg.onerror = () => reject(new Error('Failed to load hotel image'))
                   })
                   
                   // Add hotel image (30mm x 30mm)
@@ -297,12 +298,13 @@ const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
               const transfer = transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)
               if (transfer?.photo_url) {
                 try {
-                  const transferImg = new Image()
+                  const transferImg = document.createElement('img')
                   transferImg.crossOrigin = 'anonymous'
                   transferImg.src = transfer.photo_url
                   
-                  await new Promise((resolve) => {
-                    transferImg.onload = resolve
+                  await new Promise<void>((resolve, reject) => {
+                    transferImg.onload = () => resolve()
+                    transferImg.onerror = () => reject(new Error('Failed to load transfer image'))
                   })
                   
                   // Add transfer image (30mm x 30mm)
