@@ -32,6 +32,19 @@ interface Query {
 }
 
 const Queries: React.FC = () => {
+  const safeString = (value: unknown, fallback: string): string => {
+    if (typeof value === 'string') return value
+    if (value === null || value === undefined) return fallback
+    if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+      return value.toString()
+    }
+    try {
+      return String(value)
+    } catch {
+      return fallback
+    }
+  }
+
   const navigate = useNavigate()
   const [queries, setQueries] = useState<Query[]>([])
   const [loading, setLoading] = useState<boolean>(true)
@@ -306,7 +319,7 @@ const Queries: React.FC = () => {
                           {query.id}
                         </button>
                         <Badge className="bg-purple-500 text-white text-xs px-1 py-0.5">
-                          {typeof query.status === 'string' ? query.status : query.status?.toString() || 'New'}
+                          {safeString(query.status, 'New')}
                         </Badge>
                         {query.status === 'Hot Lead' && (
                           <Badge className="bg-red-500 text-white text-xs px-1 py-0.5">
@@ -316,7 +329,7 @@ const Queries: React.FC = () => {
                         <div className="text-xs">
                           <div className="text-gray-500">Requirement</div>
                           <div className="font-medium text-gray-900">
-                            {typeof query.requirement === 'string' ? query.requirement : query.requirement?.toString() || 'Full package'}
+                            {safeString(query.requirement, 'Full package')}
                           </div>
                         </div>
                       </div>
@@ -324,16 +337,16 @@ const Queries: React.FC = () => {
                       {/* Client Information */}
                       <div className="w-40">
                         <div className="font-bold text-gray-900 text-xs">
-                          Mr. {typeof query.name === 'string' ? query.name : query.name?.toString() || 'Unknown'} (Client)
+                          Mr. {safeString(query.name, 'Unknown')} (Client)
                         </div>
                         <div className="text-xs text-gray-600">
-                          {typeof query.phone === 'string' ? query.phone : query.phone?.toString() || 'No phone'}
+                          {safeString(query.phone, 'No phone')}
                         </div>
                         <div className="text-xs text-gray-600">
-                          {typeof query.email === 'string' ? query.email : query.email?.toString() || 'No email'}
+                          {safeString(query.email, 'No email')}
                         </div>
                         <div className="text-xs text-gray-600">
-                          {typeof query.source === 'string' ? query.source : query.source?.toString() || 'Unknown'}
+                          {safeString(query.source, 'Unknown')}
                         </div>
                       </div>
 
@@ -341,7 +354,7 @@ const Queries: React.FC = () => {
                       <div className="w-32">
                         <div className="text-xs text-gray-500">Destination</div>
                         <Badge className="bg-gray-800 text-white text-xs px-1 py-0.5 mb-1">
-                          {typeof query.destination === 'string' ? query.destination : query.destination?.toString() || 'Unknown'}
+                          {safeString(query.destination, 'Unknown')}
                         </Badge>
                         <div className="text-xs text-gray-500">Travellers</div>
                         <div className="text-xs text-gray-900">
@@ -381,7 +394,7 @@ const Queries: React.FC = () => {
                       {/* Tasks & Notes */}
                       <div className="w-24">
                         <div className="text-xs text-gray-900 mb-1">
-                          {typeof query.tasks === 'string' ? query.tasks : query.tasks?.toString() || 'No Task'}
+                          {safeString(query.tasks, 'No Task')}
                         </div>
                         <div className="flex items-center text-xs text-orange-600 mb-1">
                           <div className="w-2 h-2 bg-orange-500 rounded mr-1"></div>
