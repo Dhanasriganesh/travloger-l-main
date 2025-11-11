@@ -464,19 +464,21 @@ const ItineraryBuilder: React.FC = () => {
       
       // Test: Try to fetch fresh data from database
       try {
-        console.log('🔄 Fetching fresh itinerary data from database...')
-        const freshRes = await fetch(`/api/itineraries/${row.id}`)
-        const freshData = await freshRes.json()
-        console.log('🔄 Fresh data from database:', {
-          hasCoverPhoto: !!freshData.itinerary?.cover_photo,
-          coverPhotoLength: freshData.itinerary?.cover_photo?.length || 0,
-          coverPhotoStart: freshData.itinerary?.cover_photo?.substring(0, 30) || 'none'
-        })
-        
-        // Use fresh data if available
-        if (freshData.itinerary?.cover_photo) {
-          console.log('🔄 Using fresh cover photo from database')
-          row.cover_photo = freshData.itinerary.cover_photo
+        if (row?.id) {
+          console.log('🔄 Fetching fresh itinerary data from database...')
+          const freshRes = await fetch(`/api/itineraries/${row.id}`)
+          const freshData = await freshRes.json()
+          console.log('🔄 Fresh data from database:', {
+            hasCoverPhoto: !!freshData.itinerary?.cover_photo,
+            coverPhotoLength: freshData.itinerary?.cover_photo?.length || 0,
+            coverPhotoStart: freshData.itinerary?.cover_photo?.substring(0, 30) || 'none'
+          })
+          
+          // Use fresh data if available
+          if (freshData.itinerary?.cover_photo && row) {
+            console.log('🔄 Using fresh cover photo from database')
+            row.cover_photo = freshData.itinerary.cover_photo
+          }
         }
       } catch (error) {
         console.error('🔄 Error fetching fresh data:', error)
@@ -508,7 +510,7 @@ const ItineraryBuilder: React.FC = () => {
           console.log('🖼️ Cover photo starts with:', row.cover_photo.substring(0, 50))
           
           // Convert cover photo to canvas
-          const coverImg = new Image()
+          const coverImg = document.createElement('img')
           coverImg.crossOrigin = 'anonymous'
           
           // Check if it's a base64 data URL
@@ -522,11 +524,11 @@ const ItineraryBuilder: React.FC = () => {
           
           console.log('🖼️ Image object created, waiting for load...')
           
-          await new Promise((resolve, reject) => {
+          await new Promise<void>((resolve, reject) => {
             coverImg.onload = () => {
               console.log('🖼️ Cover photo loaded successfully!')
               console.log('🖼️ Image dimensions:', coverImg.width, 'x', coverImg.height)
-              resolve(true)
+              resolve()
             }
             coverImg.onerror = (error) => {
               console.error('🖼️ Cover photo failed to load:', error)
@@ -727,13 +729,13 @@ const ItineraryBuilder: React.FC = () => {
                 const hotel = hotels.find(h => h.name === eventData.hotelName)
                 if (hotel?.icon_url) {
                   try {
-                    const hotelImg = new Image()
+                    const hotelImg = document.createElement('img')
                     hotelImg.crossOrigin = 'anonymous'
                     hotelImg.src = hotel.icon_url
                     
-                    await new Promise((resolve, reject) => {
-                      hotelImg.onload = resolve
-                      hotelImg.onerror = reject
+                    await new Promise<void>((resolve, reject) => {
+                      hotelImg.onload = () => resolve()
+                      hotelImg.onerror = () => reject(new Error('Hotel image load timeout'))
                       setTimeout(() => reject(new Error('Hotel image load timeout')), 3000)
                     })
                     
@@ -767,13 +769,13 @@ const ItineraryBuilder: React.FC = () => {
                 const transfer = transfers.find(t => t.query_name === eventData.name && t.destination === eventData.destination)
                 if (transfer?.photo_url) {
                   try {
-                    const transferImg = new Image()
+                    const transferImg = document.createElement('img')
                     transferImg.crossOrigin = 'anonymous'
                     transferImg.src = transfer.photo_url
                     
-                    await new Promise((resolve, reject) => {
-                      transferImg.onload = resolve
-                      transferImg.onerror = reject
+                    await new Promise<void>((resolve, reject) => {
+                      transferImg.onload = () => resolve()
+                      transferImg.onerror = () => reject(new Error('Transfer image load timeout'))
                       setTimeout(() => reject(new Error('Transfer image load timeout')), 3000)
                     })
                     
