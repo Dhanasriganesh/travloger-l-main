@@ -47,7 +47,7 @@ const Leads: React.FC = () => {
         const uniqueDestinations = [...new Set((data.destinations || [])
           .map((dest: any) => dest?.name || dest)
           .filter(Boolean)
-        )]
+        )] as string[]
         setDestinations(uniqueDestinations)
       }
     } catch (error) {
