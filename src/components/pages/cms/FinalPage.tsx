@@ -114,12 +114,13 @@ const FinalPage: React.FC<FinalPageProps> = ({ itinerary }) => {
       if (itinerary?.cover_photo) {
         try {
           // Convert cover photo to canvas
-          const coverImg = new Image()
+          const coverImg = document.createElement('img')
           coverImg.crossOrigin = 'anonymous'
           coverImg.src = itinerary.cover_photo
           
-          await new Promise((resolve) => {
-            coverImg.onload = resolve
+          await new Promise<void>((resolve, reject) => {
+            coverImg.onload = () => resolve()
+            coverImg.onerror = () => reject(new Error('Failed to load cover image'))
           })
           
           // Add cover photo to PDF (full width, 60mm height)
