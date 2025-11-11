@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const getSupabaseClient = (): SupabaseClient | null => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('Supabase environment variables are not configured')
+    return null
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 // Check payment status with Razorpay and update booking
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase not configured' },
+        { status: 500 }
+      )
+    }
+
     const { bookingId, razorpayOrderId } = await request.json()
     
     if (!bookingId && !razorpayOrderId) {
@@ -153,8 +167,8 @@ export async function POST(request: NextRequest) {
           const errorText = await listResponse.text()
           console.error('Failed to list payment links:', errorText)
         }
-      } catch (listError: any) {
-        console.error('Error listing payment links:', listError.message)
+      } catch (listError: unknown) {
+        console.error('Error listing payment links:', listError)
       }
     }
     
@@ -259,21 +273,25 @@ export async function POST(request: NextRequest) {
         }
       })
       
-    } catch (fetchError: any) {
+    } catch (fetchError: unknown) {
+      const message =
+        fetchError instanceof Error ? fetchError.message : 'Unknown error'
       console.error('Error fetching from Razorpay:', fetchError)
       return NextResponse.json(
         { 
-          error: 'Failed to connect to Razorpay API: ' + fetchError.message,
+          error: 'Failed to connect to Razorpay API: ' + message,
           status: booking.status
         },
         { status: 200 }
       )
     }
     
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error'
     console.error('Error checking payment status:', error)
     return NextResponse.json(
-      { error: error.message },
+      { error: message },
       { status: 500 }
     )
   }
