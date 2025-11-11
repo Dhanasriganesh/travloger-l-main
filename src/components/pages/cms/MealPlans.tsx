@@ -264,7 +264,7 @@ const MealPlans: React.FC = () => {
                       </td>
                       <td className="px-3 py-4 text-sm text-gray-500">
                         <button 
-                          onClick={() => handleDeleteMealPlan(mealPlan.id, mealPlan.name)}
+                          onClick={() => handleDeleteMealPlan(mealPlan.id, mealPlan.code)}
                           className="hover:text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
