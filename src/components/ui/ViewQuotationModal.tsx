@@ -44,6 +44,27 @@ interface ViewQuotationModalProps {
   queryId?: string
 }
 
+const fallbackQuotationData: QuotationData = {
+  queryId: 'N/A',
+  customerName: 'Customer',
+  destination: 'Destination',
+  adults: 0,
+  children: 0,
+  nights: 0,
+  days: 0,
+  startDate: '',
+  endDate: '',
+  queryDate: '',
+  totalPrice: 0,
+  hotels: [],
+  itinerary: [],
+  inclusions: [],
+  exclusions: [],
+  terms: [],
+  cancellationPolicy: [],
+  usefulTips: []
+}
+
 const ViewQuotationModal: React.FC<ViewQuotationModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -198,12 +219,12 @@ const ViewQuotationModal: React.FC<ViewQuotationModalProps> = ({
       } else {
         console.error('❌ Failed to fetch quotation data:', data.error)
         // Fallback to sample data if API fails
-        setQuotationData(sampleQuotationData)
+        setQuotationData(fallbackQuotationData)
       }
     } catch (error) {
       console.error('❌ Error fetching quotation data:', error)
       // Fallback to sample data if API fails
-      setQuotationData(sampleQuotationData)
+      setQuotationData(fallbackQuotationData)
     } finally {
       setLoading(false)
     }
