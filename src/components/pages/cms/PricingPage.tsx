@@ -321,9 +321,15 @@ const PricingPage: React.FC<PricingPageProps> = ({ itinerary }) => {
         console.error('❌ Error saving pricing data:', error)
         alert('Error saving pricing data: ' + error.error)
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('❌ Error saving pricing data:', error)
-      alert('Error saving pricing data: ' + error.message)
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Unknown error'
+      alert('Error saving pricing data: ' + message)
     }
   }
 
