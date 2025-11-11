@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const getSupabaseClient = (): SupabaseClient | null => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('Supabase environment variables are not configured')
+    return null
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const { searchParams } = new URL(request.url)
     const paymentLinkId = searchParams.get('razorpay_payment_link_id')
     const paymentId = searchParams.get('razorpay_payment_id')
@@ -59,7 +70,7 @@ export async function GET(request: NextRequest) {
     // If payment status is not paid or booking not found
     return NextResponse.redirect(new URL('/payment-failed', request.url))
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in payment callback:', error)
     return NextResponse.redirect(new URL('/payment-failed', request.url))
   }
@@ -68,6 +79,11 @@ export async function GET(request: NextRequest) {
 // Webhook handler for Razorpay events
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const body = await request.json()
     const event = body.event
     const payload = body.payload?.payment_link?.entity || body.payload?.payment?.entity
@@ -103,9 +119,10 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true })
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in webhook handler:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
