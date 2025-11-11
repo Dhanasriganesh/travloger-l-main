@@ -349,7 +349,29 @@ const Hotels: React.FC = () => {
   const handleCloseForm = () => {
     setShowAddForm(false)
     setEditingHotel(null)
-    setFormData({ name: '', destination: '', category: 3, hotelType: 'Hotel', supplierId: '', price: 0, address: '', location: '', phone: '', email: '', website: '', mapLink: '', amenities: [], mealPlanOptions: [], checkinTime: '', checkoutTime: '', gallery: [], notes: '', iconUrl: '', status: 'Active' })
+    setFormData({
+      name: '',
+      destination: '',
+      category: 3,
+      hotelType: 'Hotel',
+      supplierId: '',
+      price: 0,
+      address: '',
+      location: '',
+      phone: '',
+      contactPerson: '',
+      email: '',
+      website: '',
+      mapLink: '',
+      amenities: [],
+      mealPlanOptions: [],
+      checkinTime: '',
+      checkoutTime: '',
+      gallery: [],
+      notes: '',
+      iconUrl: '',
+      status: 'Active'
+    })
     setDestinationInput('')
     setShowDestinationSuggestions(false)
     setSelectedFile(null)
