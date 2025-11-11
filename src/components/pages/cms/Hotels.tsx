@@ -567,7 +567,17 @@ const Hotels: React.FC = () => {
       triple: '',
       quad: '',
       cwb: '',
-      cnb: ''
+      cnb: '',
+      seasonName: '',
+      costPrice: '',
+      sellingPrice: '',
+      currency: 'INR',
+      extraAdult: '',
+      extraChild: '',
+      weekendRateDiff: '',
+      weekdayRateDiff: '',
+      rateNotes: '',
+      status: 'Active'
     });
   }
 
