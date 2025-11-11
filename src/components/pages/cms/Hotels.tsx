@@ -227,7 +227,29 @@ const Hotels: React.FC = () => {
 
       await fetchHotels(); // Refresh the list
       setShowAddForm(false);
-      setFormData({ name: '', destination: '', category: 3, hotelType: 'Hotel', supplierId: '', price: 0, address: '', location: '', phone: '', email: '', website: '', mapLink: '', amenities: [], mealPlanOptions: [], checkinTime: '', checkoutTime: '', gallery: [], notes: '', iconUrl: '', status: 'Active' });
+      setFormData({
+        name: '',
+        destination: '',
+        category: 3,
+        hotelType: 'Hotel',
+        supplierId: '',
+        price: 0,
+        address: '',
+        location: '',
+        phone: '',
+        contactPerson: '',
+        email: '',
+        website: '',
+        mapLink: '',
+        amenities: [],
+        mealPlanOptions: [],
+        checkinTime: '',
+        checkoutTime: '',
+        gallery: [],
+        notes: '',
+        iconUrl: '',
+        status: 'Active'
+      });
       setEditingHotel(null);
       setSelectedFile(null);
       setFileName('');
