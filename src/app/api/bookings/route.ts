@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const getSupabaseClient = (): SupabaseClient | null => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('Supabase environment variables are not configured')
+    return null
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 // GET - Fetch all bookings or filter by status
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const leadId = searchParams.get('leadId')
@@ -70,6 +81,11 @@ export async function GET(request: NextRequest) {
 // POST - Create a new booking
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const body = await request.json()
     const {
       lead_id,
@@ -134,6 +150,11 @@ export async function POST(request: NextRequest) {
 // PATCH - Update booking status
 export async function PATCH(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const body = await request.json()
     const { id, status, payment_status, razorpay_payment_id } = body
     
@@ -167,6 +188,11 @@ export async function PATCH(request: NextRequest) {
 // DELETE - Delete a booking/payment record
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    }
+
     const body = await request.json()
     const { id } = body
     
