@@ -231,10 +231,11 @@ const Suppliers: React.FC = () => {
     })
   }
 
-  const filteredSuppliers = suppliers.filter(supplier =>
-    supplier.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    `${supplier.first_name} ${supplier.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredSuppliers = suppliers.filter(supplier => {
+    const company = supplier.company_name?.toLowerCase() || ''
+    const contact = supplier.contact_person_name?.toLowerCase() || ''
+    return company.includes(searchTerm.toLowerCase()) || contact.includes(searchTerm.toLowerCase())
+  })
 
   if (loading) {
     return (
