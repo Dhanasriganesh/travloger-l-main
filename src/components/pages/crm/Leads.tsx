@@ -45,7 +45,7 @@ const Leads: React.FC = () => {
         const data = await response.json()
         // Extract name property from destination objects and remove duplicates
         const uniqueDestinations = [...new Set((data.destinations || [])
-          .map(dest => dest?.name || dest)
+          .map((dest: any) => dest?.name || dest)
           .filter(Boolean)
         )]
         setDestinations(uniqueDestinations)
