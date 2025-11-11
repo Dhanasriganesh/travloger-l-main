@@ -80,7 +80,7 @@ const QueryStatus: React.FC = () => {
           date: qs.date
         }))
         // Sort by display order
-        statuses.sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        statuses.sort((a: typeof statuses[number], b: typeof statuses[number]) => (a.display_order || 0) - (b.display_order || 0))
         setQueryStatuses(statuses)
       } else {
         console.error('Failed to fetch query statuses:', data.error)
