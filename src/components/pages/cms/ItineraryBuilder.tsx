@@ -1281,6 +1281,9 @@ const ItineraryBuilder: React.FC = () => {
           </div>
         </div>
 
+          </>
+        )}
+
         {/* Step Navigation */}
         <div className="flex justify-center mb-6">
           <div className="bg-gray-100 rounded-lg p-1 flex gap-1">
@@ -1316,8 +1319,6 @@ const ItineraryBuilder: React.FC = () => {
             </button>
           </div>
         </div>
-          </>
-        )}
 
         <div className="grid grid-cols-12 gap-4">
           {currentStep === 'build' && (
