@@ -27,6 +27,10 @@ import MediaLibrary from '../pages/cms/MediaLibrary'
 import ItineraryNotesInclusions from '../pages/cms/ItineraryNotesInclusions'
 import UserRoleAccess from '../pages/cms/UserRoleAccess'
 import LeadSourceDetailed from '../pages/cms/LeadSourceDetailed'
+import LeadTypeMaster from '../pages/cms/LeadTypeMaster'
+import LeadScoringMaster from '../pages/cms/LeadScoringMaster'
+import VendorPayoutMaster from '../pages/cms/VendorPayoutMaster'
+import ExpenseTrackingMaster from '../pages/cms/ExpenseTrackingMaster'
 import Settings from '../pages/Settings'
 import WebsiteEdit from '../pages/cms/WebsiteEdit'
 import Employees from '../pages/Employees'
@@ -178,6 +182,26 @@ const Routers: React.FC = () => {
       <Route path="/settings/lead-source-detailed" element={
         <ProtectedRoute requiredRole="Super Admin">
           <LeadSourceDetailed />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/lead-type-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <LeadTypeMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/lead-scoring-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <LeadScoringMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/vendor-payout-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <VendorPayoutMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/expense-tracking-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <ExpenseTrackingMaster />
         </ProtectedRoute>
       } />
       <Route path="/settings/day-itinerary" element={

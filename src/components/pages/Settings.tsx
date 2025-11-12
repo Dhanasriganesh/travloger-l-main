@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Hotel, Flag, Users, Utensils, Car, Mail, CloudRain, Map, ListOrdered, Landmark, DollarSign, CalendarClock, Inbox, DollarSign as DollarIcon, Calculator, FileText, Truck, BookOpen, Image as ImageIcon, ClipboardList, Shield } from 'lucide-react'
+import { Hotel, Flag, Users, Utensils, Car, Mail, CloudRain, Map, ListOrdered, Landmark, DollarSign, CalendarClock, Inbox, DollarSign as DollarIcon, Calculator, FileText, Truck, BookOpen, Image as ImageIcon, ClipboardList, Shield, Tag, Target, Wallet, Receipt } from 'lucide-react'
 
 type MasterItem = {
   title: string
@@ -21,6 +21,10 @@ const masters: MasterItem[] = [
   { title: 'Transfer', to: '/settings/transfer', icon: <Car className="h-8 w-8 text-blue-500" /> },
   { title: 'Vehicle Types', to: '/settings/vehicle-types', icon: <Car className="h-8 w-8 text-blue-500" /> },
   { title: 'Lead Source', to: '/settings/lead-source-detailed', icon: <Inbox className="h-8 w-8 text-blue-500" /> },
+  { title: 'Lead Type Master', to: '/settings/lead-type-master', icon: <Tag className="h-8 w-8 text-blue-500" />},
+  { title: 'Lead Scoring Master', to: '/settings/lead-scoring-master', icon: <Target className="h-8 w-8 text-blue-500" />},
+  { title: 'Vendor Payout Master', to: '/settings/vendor-payout-master', icon: <Wallet className="h-8 w-8 text-blue-500" />},
+  { title: 'Expense Tracking Master', to: '/settings/expense-tracking-master', icon: <Receipt className="h-8 w-8 text-blue-500" />},
   { title: 'Day Itinerary', to: '/settings/day-itinerary', icon: <CalendarClock className="h-8 w-8 text-blue-500" /> },
   { title: 'Package Theme', to: '/settings/package-theme', icon: <Map className="h-8 w-8 text-blue-500" /> },
   { title: 'Mail Setting', to: '/settings/mail', icon: <Mail className="h-8 w-8 text-blue-500" /> },

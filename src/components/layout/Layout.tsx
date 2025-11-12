@@ -86,6 +86,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isTransfersPage = location.pathname === '/settings/transfer'
   const isVehicleTypesPage = location.pathname === '/settings/vehicle-types'
   const isLeadSourceDetailedPage = location.pathname === '/settings/lead-source-detailed'
+  const isLeadTypeMasterPage = location.pathname === '/settings/lead-type-master'
+  const isLeadScoringMasterPage = location.pathname === '/settings/lead-scoring-master'
+  const isVendorPayoutMasterPage = location.pathname === '/settings/vendor-payout-master'
+  const isExpenseTrackingMasterPage = location.pathname === '/settings/expense-tracking-master'
   const isDayItineraryPage = location.pathname === '/settings/day-itinerary'
   const isPackageThemePage = location.pathname === '/settings/package-theme'
   const isQueryStatusPage = location.pathname === '/settings/query-status'
@@ -290,7 +294,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Settings Sidebar */}
-      {isSettingsPage && !isSuppliersPage && !isDestinationsPage && !isRoomTypesPage && !isActivitiesPage && !isMealPlansPage && !isHotelsPage && !isHotelRatesPage && !isTransfersPage && !isVehicleTypesPage && !isLeadSourceDetailedPage && !isDayItineraryPage && !isPackageThemePage && !isQueryStatusPage && !isPricingTaxRulePage && !isPolicyPage && !isVehicleDriverPage && !isItineraryTemplatePage && !isMediaLibraryPage && !isItineraryNotesInclusionsPage && !isUserRoleAccessPage && (
+      {isSettingsPage && !isSuppliersPage && !isDestinationsPage && !isRoomTypesPage && !isActivitiesPage && !isMealPlansPage && !isHotelsPage && !isHotelRatesPage && !isTransfersPage && !isVehicleTypesPage && !isLeadSourceDetailedPage && !isLeadTypeMasterPage && !isLeadScoringMasterPage && !isVendorPayoutMasterPage && !isExpenseTrackingMasterPage && !isDayItineraryPage && !isPackageThemePage && !isQueryStatusPage && !isPricingTaxRulePage && !isPolicyPage && !isVehicleDriverPage && !isItineraryTemplatePage && !isMediaLibraryPage && !isItineraryNotesInclusionsPage && !isUserRoleAccessPage && (
         <div className={`fixed inset-y-0 z-40 w-56 bg-slate-700 shadow-xl border-r border-gray-600 transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? 'left-12' : 'left-48'
         }`} style={{ left: sidebarCollapsed ? '48px' : '192px' }}>
@@ -332,7 +336,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}
 
       {/* Main content */}
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out`} style={{ marginLeft: isSettingsPage && !isSuppliersPage && !isDestinationsPage && !isRoomTypesPage && !isActivitiesPage && !isMealPlansPage && !isHotelsPage && !isHotelRatesPage && !isTransfersPage && !isVehicleTypesPage && !isLeadSourceDetailedPage && !isDayItineraryPage && !isPackageThemePage && !isQueryStatusPage && !isPricingTaxRulePage && !isPolicyPage && !isVehicleDriverPage && !isItineraryTemplatePage && !isMediaLibraryPage && !isItineraryNotesInclusionsPage && !isUserRoleAccessPage ? (sidebarCollapsed ? '272px' : '240px') : '0' }}>
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out`} style={{ marginLeft: isSettingsPage && !isSuppliersPage && !isDestinationsPage && !isRoomTypesPage && !isActivitiesPage && !isMealPlansPage && !isHotelsPage && !isHotelRatesPage && !isTransfersPage && !isVehicleTypesPage && !isLeadSourceDetailedPage && !isLeadTypeMasterPage && !isLeadScoringMasterPage && !isVendorPayoutMasterPage && !isExpenseTrackingMasterPage && !isDayItineraryPage && !isPackageThemePage && !isQueryStatusPage && !isPricingTaxRulePage && !isPolicyPage && !isVehicleDriverPage && !isItineraryTemplatePage && !isMediaLibraryPage && !isItineraryNotesInclusionsPage && !isUserRoleAccessPage ? (sidebarCollapsed ? '272px' : '240px') : '0' }}>
         {/* Top bar */}
         <header className="bg-white shadow-sm border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center justify-between px-6 py-3">

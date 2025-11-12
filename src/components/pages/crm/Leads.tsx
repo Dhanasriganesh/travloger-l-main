@@ -14,6 +14,13 @@ interface Lead {
   assigned_employee_id?: string
   assigned_employee_name?: string
   assigned_employee_email?: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  lead_source_id?: number
+  lead_score?: number
+  lead_priority?: string
+  last_score_calculated?: string
 }
 
 
@@ -76,7 +83,10 @@ const Leads: React.FC = () => {
     source: 'Meta Ads',
     custom_source: '',
     destination: 'Kashmir',
-    custom_notes: ''
+    custom_notes: '',
+    utm_source: '',
+    utm_medium: '',
+    utm_campaign: ''
   })
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
@@ -324,7 +334,10 @@ const Leads: React.FC = () => {
         travel_dates: newLead.travel_dates,
         source: newLead.source === 'Custom' ? newLead.custom_source : newLead.source,
         destination: newLead.destination,
-        custom_notes: newLead.custom_notes
+        custom_notes: newLead.custom_notes,
+        utm_source: newLead.utm_source,
+        utm_medium: newLead.utm_medium,
+        utm_campaign: newLead.utm_campaign
       }
 
       const response = await fetch('/api/leads', {
@@ -355,7 +368,10 @@ const Leads: React.FC = () => {
           source: 'Meta Ads',
           custom_source: '',
           destination: 'Kashmir',
-          custom_notes: ''
+          custom_notes: '',
+          utm_source: '',
+          utm_medium: '',
+          utm_campaign: ''
         })
         alert('Lead created successfully!')
       } else {
@@ -639,6 +655,7 @@ const Leads: React.FC = () => {
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Travelers</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Travel Dates</th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
@@ -661,6 +678,22 @@ const Leads: React.FC = () => {
                       <span className={`inline-flex px-1.5 py-0.5 text-xs font-semibold rounded-full ${getSourceColor(lead.source)}`}>
                         {lead.source}
                       </span>
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {lead.lead_priority ? (
+                        <div className="flex items-center gap-1">
+                          <span className={`inline-flex px-2 py-1 text-xs font-bold rounded-full ${
+                            lead.lead_priority === 'Hot' ? 'bg-red-100 text-red-800' :
+                            lead.lead_priority === 'Warm' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-blue-100 text-blue-800'
+                          }`}>
+                            {lead.lead_priority}
+                          </span>
+                          <span className="text-xs text-gray-500">({lead.lead_score || 0})</span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">Not scored</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-900">
                       {lead.number_of_travelers || 'N/A'}
@@ -874,6 +907,53 @@ const Leads: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* UTM Tracking Information */}
+              {(selectedLead.utm_source || selectedLead.utm_medium || selectedLead.utm_campaign) && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900 flex items-center space-x-1">
+                    <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span>UTM Tracking</span>
+                  </h4>
+                  <div className="grid grid-cols-1 gap-3">
+                    {selectedLead.utm_source && (
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          <span className="text-xs font-medium text-blue-700">UTM Source</span>
+                        </div>
+                        <p className="text-sm text-blue-900">{selectedLead.utm_source}</p>
+                      </div>
+                    )}
+                    {selectedLead.utm_medium && (
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                          </svg>
+                          <span className="text-xs font-medium text-blue-700">UTM Medium</span>
+                        </div>
+                        <p className="text-sm text-blue-900">{selectedLead.utm_medium}</p>
+                      </div>
+                    )}
+                    {selectedLead.utm_campaign && (
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                          </svg>
+                          <span className="text-xs font-medium text-blue-700">UTM Campaign</span>
+                        </div>
+                        <p className="text-sm text-blue-900">{selectedLead.utm_campaign}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
@@ -1258,6 +1338,51 @@ const Leads: React.FC = () => {
                     />
                   </div>
                 )}
+              </div>
+
+              {/* UTM Tracking (Optional) */}
+              <div className="space-y-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <h4 className="text-sm font-semibold text-gray-900 flex items-center space-x-1">
+                  <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>UTM Tracking</span>
+                  <span className="text-xs font-normal text-gray-500">(Optional)</span>
+                </h4>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">UTM Source</label>
+                    <input
+                      type="text"
+                      value={newLead.utm_source}
+                      onChange={(e) => setNewLead({ ...newLead, utm_source: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white"
+                      placeholder="e.g., facebook, google, website"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">UTM Medium</label>
+                      <input
+                        type="text"
+                        value={newLead.utm_medium}
+                        onChange={(e) => setNewLead({ ...newLead, utm_medium: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white"
+                        placeholder="e.g., cpc, organic"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">UTM Campaign</label>
+                      <input
+                        type="text"
+                        value={newLead.utm_campaign}
+                        onChange={(e) => setNewLead({ ...newLead, utm_campaign: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white"
+                        placeholder="e.g., summer_sale"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Additional Notes */}

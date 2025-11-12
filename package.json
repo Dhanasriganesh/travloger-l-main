@@ -10,6 +10,7 @@
     "check-payment": "node scripts/check-razorpay-setup.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.929.0",
     "@supabase/supabase-js": "^2.57.4",
     "@tinymce/tinymce-react": "^6.3.0",
     "@types/nodemailer": "^7.0.1",
