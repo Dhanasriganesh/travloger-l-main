@@ -23,6 +23,20 @@ interface Expense {
   created_at: string
 }
 
+/**
+ * Expense Tracking Master Component
+ * 
+ * Integrations:
+ * 1. Links to Vendor Payout Master via trip_id
+ * 2. Links to Profit Calculation Master via trip_id (auto-calculated expenses)
+ * 3. Reports & Dashboard display expense analysis
+ * 
+ * Features:
+ * - Logs all trip-level and operational expenses
+ * - Categorizes by Hotel/Transfer/Activity/Misc
+ * - Tracks payment status
+ * - Links to trips and vendor payouts
+ */
 const ExpenseTrackingMaster: React.FC = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')

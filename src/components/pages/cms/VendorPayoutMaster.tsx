@@ -35,6 +35,20 @@ interface Supplier {
   city: string
 }
 
+/**
+ * Vendor Payout Master Component
+ * 
+ * Integrations:
+ * 1. Links to Expense Tracking Master via trip_id
+ * 2. Links to Profit Calculation Master via trip_id (auto-calculated payouts)
+ * 3. Links to Suppliers Master for vendor details
+ * 
+ * Features:
+ * - Tracks all supplier payments and settlements
+ * - Links bookings to vendor payouts
+ * - Multiple payment modes support
+ * - Payment status tracking
+ */
 const VendorPayoutMaster: React.FC = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -66,6 +80,7 @@ const VendorPayoutMaster: React.FC = () => {
   useEffect(() => {
     fetchPayouts()
     fetchSuppliers()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus])
 
   const fetchPayouts = async () => {

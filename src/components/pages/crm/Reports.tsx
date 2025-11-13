@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 
 
-type SectionType = 'leads' | 'payments' | 'bookings'
+type SectionType = 'leads' | 'payments' | 'bookings' | 'expenses' | 'profit'
 type LocationType = 'all' | 'Kashmir' | 'Ladakh' | 'Kerala' | 'Gokarna' | 'Meghalaya' | 'Mysore' | 'Singapore' | 'Hyderabad' | 'Bengaluru' | 'Manali'
 
 const Reports: React.FC = () => {
@@ -37,6 +37,12 @@ const Reports: React.FC = () => {
         case 'bookings':
           apiEndpoint = '/api/bookings'
           break
+        case 'expenses':
+          apiEndpoint = '/api/expense-tracking'
+          break
+        case 'profit':
+          apiEndpoint = '/api/profit-calculation'
+          break
         default:
           apiEndpoint = '/api/leads'
       }
@@ -45,7 +51,7 @@ const Reports: React.FC = () => {
       const data = await response.json()
 
       if (response.ok) {
-        let rawData = data[selectedSection] || data.bookings || data.leads || []
+        let rawData = data[selectedSection] || data.expenses || data.profitCalculations || data.bookings || data.leads || []
         
         // Apply client-side filtering for month and year
         let filteredData = rawData
@@ -150,6 +156,37 @@ const Reports: React.FC = () => {
             booking.travelers || 'N/A',
             booking.travel_date || 'N/A',
             new Date(booking.booking_date || booking.created_at).toLocaleDateString()
+          ])
+          break
+
+        case 'expenses':
+          headers = ['ID', 'Trip ID', 'Category', 'Amount', 'Payment Status', 'Vendor', 'Payment Date', 'Description', 'Created Date']
+          excelData = reportData.map((expense: any) => [
+            expense.id,
+            expense.trip_id || 'N/A',
+            expense.expense_category || 'N/A',
+            expense.expense_amount || 0,
+            expense.payment_status || 'N/A',
+            expense.vendor_name || 'N/A',
+            expense.payment_date || 'N/A',
+            expense.description || 'N/A',
+            new Date(expense.created_at).toLocaleDateString()
+          ])
+          break
+
+        case 'profit':
+          headers = ['ID', 'Trip ID', 'Customer', 'Revenue', 'Expenses', 'Vendor Payouts', 'Gross Profit', 'Profit Margin %', 'Status', 'Date']
+          excelData = reportData.map((profit: any) => [
+            profit.id,
+            profit.trip_id || 'N/A',
+            profit.customer_name || 'N/A',
+            profit.total_revenue || 0,
+            profit.total_expenses || 0,
+            profit.total_vendor_payouts || 0,
+            profit.gross_profit || 0,
+            profit.profit_margin || 0,
+            profit.status || 'N/A',
+            new Date(profit.calculation_date || profit.created_at).toLocaleDateString()
           ])
           break
       }
@@ -261,6 +298,8 @@ const Reports: React.FC = () => {
               <option value="leads">Leads</option>
               <option value="payments">Payments</option>
               <option value="bookings">Bookings</option>
+              <option value="expenses">Expenses</option>
+              <option value="profit">Profit Analysis</option>
             </select>
           </div>
 
@@ -361,11 +400,31 @@ const Reports: React.FC = () => {
                   {selectedSection === 'bookings' && (
                     <>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    </>
+                  )}
+                  {selectedSection === 'expenses' && (
+                    <>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trip ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    </>
+                  )}
+                  {selectedSection === 'profit' && (
+                    <>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trip ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expenses</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Margin %</th>
                     </>
                   )}
               </tr>
@@ -402,6 +461,30 @@ const Reports: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{item.amount || 0}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.status || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(item.booking_date || item.created_at).toLocaleDateString()}</td>
+                      </>
+                    )}
+                    {selectedSection === 'expenses' && (
+                      <>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.trip_id || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.expense_category || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{item.expense_amount || 0}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.payment_status || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.vendor_name || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(item.created_at).toLocaleDateString()}</td>
+                      </>
+                    )}
+                    {selectedSection === 'profit' && (
+                      <>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.trip_id || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.customer_name || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{item.total_revenue || 0}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{item.total_expenses || 0}</td>
+                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.gross_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          ₹{item.gross_profit || 0}
+                        </td>
+                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.profit_margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {(item.profit_margin || 0).toFixed(2)}%
+                        </td>
                       </>
                     )}
                 </tr>

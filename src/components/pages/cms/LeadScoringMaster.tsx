@@ -53,6 +53,7 @@ const LeadScoringMaster: React.FC = () => {
 
   useEffect(() => {
     fetchScoringRules()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterLeadType])
 
   const fetchScoringRules = async () => {
@@ -285,7 +286,7 @@ const LeadScoringMaster: React.FC = () => {
                 placeholder="e.g., 500000 or 5,9 for between"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Leave empty for 'not_empty', 'is_empty', or 'contains_comma'
+                Leave empty for &apos;not_empty&apos;, &apos;is_empty&apos;, or &apos;contains_comma&apos;
               </p>
             </div>
 

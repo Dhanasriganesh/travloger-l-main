@@ -31,6 +31,7 @@ import LeadTypeMaster from '../pages/cms/LeadTypeMaster'
 import LeadScoringMaster from '../pages/cms/LeadScoringMaster'
 import VendorPayoutMaster from '../pages/cms/VendorPayoutMaster'
 import ExpenseTrackingMaster from '../pages/cms/ExpenseTrackingMaster'
+import ProfitCalculationMaster from '../pages/cms/ProfitCalculationMaster'
 import Settings from '../pages/Settings'
 import WebsiteEdit from '../pages/cms/WebsiteEdit'
 import Employees from '../pages/Employees'
@@ -202,6 +203,11 @@ const Routers: React.FC = () => {
       <Route path="/settings/expense-tracking-master" element={
         <ProtectedRoute requiredRole="Super Admin">
           <ExpenseTrackingMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/profit-calculation-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <ProfitCalculationMaster />
         </ProtectedRoute>
       } />
       <Route path="/settings/day-itinerary" element={
