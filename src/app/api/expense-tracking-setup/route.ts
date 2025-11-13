@@ -100,7 +100,19 @@ export async function GET() {
     `)
 
     // Get expense statistics
-    let expenseStats = { 
+    type CategoryStat = {
+      expense_category: string
+      count: number
+      total: number
+    }
+
+    let expenseStats: { 
+      total: number
+      pending: number
+      paid: number
+      total_amount: number
+      by_category: CategoryStat[]
+    } = { 
       total: 0, 
       pending: 0, 
       paid: 0,
@@ -128,12 +140,18 @@ export async function GET() {
         ORDER BY total DESC
       `)
       
+      const categoryStats: CategoryStat[] = categoryResult.rows.map((row: any) => ({
+        expense_category: row.expense_category,
+        count: parseInt(row.count),
+        total: parseFloat(row.total)
+      }))
+
       expenseStats = {
         total: parseInt(statsResult.rows[0].total),
         pending: parseInt(statsResult.rows[0].pending),
         paid: parseInt(statsResult.rows[0].paid),
         total_amount: parseFloat(statsResult.rows[0].total_amount),
-        by_category: categoryResult.rows
+        by_category: categoryStats
       }
     }
 
