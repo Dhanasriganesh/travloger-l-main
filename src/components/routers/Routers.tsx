@@ -33,6 +33,7 @@ import VendorPayoutMaster from '../pages/cms/VendorPayoutMaster'
 import ExpenseTrackingMaster from '../pages/cms/ExpenseTrackingMaster'
 import ProfitCalculationMaster from '../pages/cms/ProfitCalculationMaster'
 import NotificationTemplateMaster from '../pages/cms/NotificationTemplateMaster'
+import IntegrationSettingsMaster from '../pages/cms/IntegrationSettingsMaster'
 import AuditLogMaster from '../pages/cms/AuditLogMaster'
 import Settings from '../pages/Settings'
 import WebsiteEdit from '../pages/cms/WebsiteEdit'
@@ -215,6 +216,11 @@ const Routers: React.FC = () => {
       <Route path="/settings/notification-template-master" element={
         <ProtectedRoute requiredRole="Super Admin">
           <NotificationTemplateMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/integration-settings-master" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <IntegrationSettingsMaster />
         </ProtectedRoute>
       } />
       <Route path="/settings/audit-log-master" element={
