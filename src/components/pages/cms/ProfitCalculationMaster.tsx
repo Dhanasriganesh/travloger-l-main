@@ -9,8 +9,6 @@ import { useNavigate } from 'react-router-dom'
 interface ProfitCalculation {
   id: number
   trip_id: string
-  booking_reference: string
-  customer_name: string
   total_revenue: number
   total_expenses: number
   total_vendor_payouts: number
@@ -28,9 +26,10 @@ interface ProfitCalculation {
  * Profit Calculation Master Component
  * 
  * Integrations:
- * 1. Auto-calculates from Expense Tracking Master (sum of expenses per trip)
- * 2. Auto-calculates from Vendor Payout Master (sum of payouts per trip)
- * 3. Reports & Dashboard display profit analysis
+ * 1. Links to Pricing & Tax Rule Master for sales valuation inputs
+ * 2. Auto-calculates from Expense Tracking Master (sum of expenses per trip)
+ * 3. Auto-calculates from Vendor Payout Master (sum of payouts per trip)
+ * 4. Reports & Dashboard display profit analysis
  * 
  * Features:
  * - Calculates total cost and margin per trip
@@ -50,9 +49,9 @@ const ProfitCalculationMaster: React.FC = () => {
   
   const [formData, setFormData] = useState({
     tripId: '',
-    bookingReference: '',
-    customerName: '',
-    totalRevenue: 0,
+    totalSalesValue: 0,
+    totalExpenses: 0,
+    vendorPayouts: 0,
     autoCalculate: true,
     status: 'Draft',
     notes: ''
@@ -87,9 +86,13 @@ const ProfitCalculationMaster: React.FC = () => {
     try {
       const payload = {
         trip_id: formData.tripId,
-        booking_reference: formData.bookingReference,
-        customer_name: formData.customerName,
-        total_revenue: formData.totalRevenue,
+        total_revenue: formData.totalSalesValue,
+        total_expenses: formData.totalExpenses,
+        total_vendor_payouts: formData.vendorPayouts,
+        gross_profit: formData.totalSalesValue - formData.totalExpenses - formData.vendorPayouts,
+        profit_margin: formData.totalSalesValue > 0
+          ? ((formData.totalSalesValue - formData.totalExpenses - formData.vendorPayouts) / formData.totalSalesValue) * 100
+          : 0,
         auto_calculate: formData.autoCalculate,
         status: formData.status,
         notes: formData.notes,
@@ -148,9 +151,9 @@ const ProfitCalculationMaster: React.FC = () => {
     setEditingCalculation(calculation)
     setFormData({
       tripId: calculation.trip_id,
-      bookingReference: calculation.booking_reference || '',
-      customerName: calculation.customer_name || '',
-      totalRevenue: calculation.total_revenue,
+      totalSalesValue: calculation.total_revenue,
+      totalExpenses: calculation.total_expenses,
+      vendorPayouts: calculation.total_vendor_payouts,
       autoCalculate: false,
       status: calculation.status || 'Draft',
       notes: calculation.notes || ''
@@ -180,9 +183,9 @@ const ProfitCalculationMaster: React.FC = () => {
   const resetForm = () => {
     setFormData({
       tripId: '',
-      bookingReference: '',
-      customerName: '',
-      totalRevenue: 0,
+      totalSalesValue: 0,
+      totalExpenses: 0,
+      vendorPayouts: 0,
       autoCalculate: true,
       status: 'Draft',
       notes: ''
@@ -191,11 +194,33 @@ const ProfitCalculationMaster: React.FC = () => {
     setShowAddForm(false)
   }
 
-  const filteredCalculations = calculations.filter(calc =>
-    calc.trip_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    calc.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    calc.booking_reference?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
+
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(2)}%`
+  }
+
+  const computedNetProfit =
+    formData.totalSalesValue - formData.totalExpenses - formData.vendorPayouts
+  const computedMargin =
+    formData.totalSalesValue > 0 ? (computedNetProfit / formData.totalSalesValue) * 100 : 0
+
+  const normalizedSearch = searchTerm.toLowerCase()
+  const filteredCalculations = calculations.filter((calc) => {
+    const revenueString = formatCurrency(calc.total_revenue).toLowerCase()
+    const profitString = formatCurrency(calc.gross_profit).toLowerCase()
+    return (
+      calc.trip_id?.toLowerCase().includes(normalizedSearch) ||
+      revenueString.includes(normalizedSearch) ||
+      profitString.includes(normalizedSearch)
+    )
+  })
 
   const calculateSummary = () => {
     const totalRevenue = calculations.reduce((sum, c) => sum + c.total_revenue, 0)
@@ -210,18 +235,6 @@ const ProfitCalculationMaster: React.FC = () => {
   }
 
   const summary = calculateSummary()
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
-    }).format(amount)
-  }
-
-  const formatPercentage = (value: number) => {
-    return `${value.toFixed(2)}%`
-  }
 
   if (showAddForm) {
     return (
@@ -252,40 +265,50 @@ const ProfitCalculationMaster: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Booking Reference
-              </label>
-              <Input
-                type="text"
-                value={formData.bookingReference}
-                onChange={(e) => setFormData({...formData, bookingReference: e.target.value})}
-                placeholder="BK-2025-001"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Name
-              </label>
-              <Input
-                type="text"
-                value={formData.customerName}
-                onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-                placeholder="Customer name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Total Revenue * (₹)
+                Total Sales Value * (₹)
               </label>
               <Input
                 type="number"
                 required
                 min="0"
                 step="0.01"
-                value={formData.totalRevenue}
-                onChange={(e) => setFormData({...formData, totalRevenue: parseFloat(e.target.value) || 0})}
+                value={formData.totalSalesValue}
+                onChange={(e) => setFormData({...formData, totalSalesValue: parseFloat(e.target.value) || 0})}
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Total Expense Value (₹)
+              </label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.totalExpenses}
+                onChange={(e) => setFormData({...formData, totalExpenses: parseFloat(e.target.value) || 0})}
+                disabled={formData.autoCalculate}
+              />
+              {formData.autoCalculate && (
+                <p className="text-xs text-gray-500 mt-1">Auto-filled from Expense Tracking Master</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vendor Payouts (₹)
+              </label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.vendorPayouts}
+                onChange={(e) => setFormData({...formData, vendorPayouts: parseFloat(e.target.value) || 0})}
+                disabled={formData.autoCalculate}
+              />
+              {formData.autoCalculate && (
+                <p className="text-xs text-gray-500 mt-1">Auto-filled from Vendor Payout Master</p>
+              )}
             </div>
 
             <div>
@@ -311,9 +334,31 @@ const ProfitCalculationMaster: React.FC = () => {
                   className="rounded border-gray-300"
                 />
                 <span className="text-sm font-medium text-gray-700">
-                  Auto-calculate from expenses & payouts
+                  Auto-calculate from Pricing &amp; Tax, Expenses &amp; Payouts
                 </span>
               </label>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Net Profit (₹)
+              </label>
+              <Input
+                type="number"
+                value={Number.isFinite(computedNetProfit) ? parseFloat(computedNetProfit.toFixed(2)) : 0}
+                readOnly
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Margin (%)
+              </label>
+              <Input
+                type="number"
+                value={Number.isFinite(computedMargin) ? parseFloat(computedMargin.toFixed(2)) : 0}
+                readOnly
+              />
             </div>
 
             <div className="md:col-span-2">
@@ -358,12 +403,29 @@ const ProfitCalculationMaster: React.FC = () => {
               Profit Calculation Master
             </h1>
             <p className="text-sm text-gray-600 mt-1">
-              Calculate total cost, margin, and profit for each trip
+              Calculate per-trip profit using sales value minus expenses and vendor payouts
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Connected to Pricing &amp; Tax Rule Master, Expense Tracking Master, Vendor Payout Master, and Reports &amp; Dashboard.
             </p>
           </div>
           <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="h-4 w-4 mr-2" />
             Add Calculation
+          </Button>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/settings/pricing-tax-rule')}>
+            View Pricing &amp; Tax Rule Master
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/settings/expense-tracking-master')}>
+            View Expense Tracking Master
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/settings/vendor-payout-master')}>
+            View Vendor Payout Master
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/reports')}>
+            View Reports &amp; Dashboard
           </Button>
         </div>
       </div>
@@ -372,13 +434,13 @@ const ProfitCalculationMaster: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-600">Total Revenue</div>
+            <div className="text-sm text-gray-600">Total Sales Value</div>
             <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.totalRevenue)}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-600">Total Expenses</div>
+            <div className="text-sm text-gray-600">Total Expense Value</div>
             <div className="text-2xl font-bold text-red-600">{formatCurrency(summary.totalExpenses)}</div>
           </CardContent>
         </Card>
@@ -390,7 +452,7 @@ const ProfitCalculationMaster: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-600">Total Profit</div>
+            <div className="text-sm text-gray-600">Net Profit</div>
             <div className={`text-2xl font-bold ${summary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(summary.totalProfit)}
             </div>
@@ -398,7 +460,7 @@ const ProfitCalculationMaster: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-gray-600">Avg Margin</div>
+            <div className="text-sm text-gray-600">Avg Margin (%)</div>
             <div className={`text-2xl font-bold ${summary.avgMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatPercentage(summary.avgMargin)}
             </div>
@@ -412,7 +474,7 @@ const ProfitCalculationMaster: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="Search by trip ID, customer, or booking reference..."
+            placeholder="Search by trip ID, sales value, or profit..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -462,19 +524,13 @@ const ProfitCalculationMaster: React.FC = () => {
                       )}
                     </div>
 
-                    {calculation.customer_name && (
-                      <p className="text-sm text-gray-600 mb-2">
-                        <span className="font-medium">Customer:</span> {calculation.customer_name}
-                      </p>
-                    )}
-
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
                       <div>
-                        <span className="text-gray-600">Revenue:</span>
+                        <span className="text-gray-600">Sales Value:</span>
                         <div className="font-semibold text-blue-600">{formatCurrency(calculation.total_revenue)}</div>
                       </div>
                       <div>
-                        <span className="text-gray-600">Expenses:</span>
+                        <span className="text-gray-600">Expense Value:</span>
                         <div className="font-semibold text-red-600">{formatCurrency(calculation.total_expenses)}</div>
                       </div>
                       <div>
@@ -482,7 +538,7 @@ const ProfitCalculationMaster: React.FC = () => {
                         <div className="font-semibold text-orange-600">{formatCurrency(calculation.total_vendor_payouts)}</div>
                       </div>
                       <div>
-                        <span className="text-gray-600">Profit:</span>
+                        <span className="text-gray-600">Net Profit:</span>
                         <div className={`font-semibold ${calculation.gross_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                           {formatCurrency(calculation.gross_profit)}
                         </div>
