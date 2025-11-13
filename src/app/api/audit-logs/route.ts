@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     await ensureTable(client)
 
     const { searchParams } = new URL(request.url)
-    const module = searchParams.get('module')
+    const moduleFilter = searchParams.get('module')
     const action = searchParams.get('action')
     const user = searchParams.get('user')
     const limit = parseInt(searchParams.get('limit') || '200', 10)
@@ -76,9 +76,9 @@ export async function GET(request: NextRequest) {
     const params: any[] = []
     let index = 1
 
-    if (module) {
+    if (moduleFilter) {
       query += ` AND module = $${index++}`
-      params.push(module)
+      params.push(moduleFilter)
     }
 
     if (action) {
