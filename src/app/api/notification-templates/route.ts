@@ -86,8 +86,9 @@ export async function GET(request: NextRequest) {
 
     query += ` ORDER BY updated_at DESC`
 
-    const templates = await client.query<NotificationTemplateRow>(query, params)
-    return NextResponse.json({ templates: templates.rows })
+    const templatesResult = await client.query(query, params)
+    const templates = templatesResult.rows as NotificationTemplateRow[]
+    return NextResponse.json({ templates })
   } catch (error: unknown) {
     console.error('Notification template GET error:', error)
     const message = error instanceof Error ? error.message : 'Unknown error'
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Template name, channel, template ID, and message content are required' }, { status: 400 })
     }
 
-    const result = await client.query<NotificationTemplateRow>(
+    const result = await client.query(
       `
         INSERT INTO notification_template_master (
           template_name,
@@ -158,7 +159,9 @@ export async function POST(request: NextRequest) {
       ]
     )
 
-    return NextResponse.json({ success: true, template: result.rows[0] })
+    const template = result.rows[0] as NotificationTemplateRow
+
+    return NextResponse.json({ success: true, template })
   } catch (error: unknown) {
     console.error('Notification template POST error:', error)
     const message = error instanceof Error ? error.message : 'Unknown error'
@@ -218,7 +221,7 @@ export async function PUT(request: NextRequest) {
     setStatements.push(`updated_at = NOW()`)
     values.push(id)
 
-    const result = await client.query<NotificationTemplateRow>(
+    const result = await client.query(
       `
         UPDATE notification_template_master
         SET ${setStatements.join(', ')}
@@ -232,7 +235,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, template: result.rows[0] })
+    const template = result.rows[0] as NotificationTemplateRow
+
+    return NextResponse.json({ success: true, template })
   } catch (error: unknown) {
     console.error('Notification template PUT error:', error)
     const message = error instanceof Error ? error.message : 'Unknown error'
