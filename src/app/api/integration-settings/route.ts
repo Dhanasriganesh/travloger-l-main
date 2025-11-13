@@ -195,9 +195,17 @@ export async function PUT(request: NextRequest) {
 
     for (const [key, value] of Object.entries(updates)) {
       if (allowed.includes(key) && value !== undefined) {
-        if (key === 'last_synced' && value) {
+        if (key === 'last_synced') {
           statements.push(`last_synced = $${index++}`)
-          values.push(new Date(value))
+          if (
+            typeof value === 'string' ||
+            typeof value === 'number' ||
+            value instanceof Date
+          ) {
+            values.push(value ? new Date(value) : null)
+          } else {
+            values.push(null)
+          }
         } else {
           statements.push(`${key} = $${index++}`)
           values.push(value)
