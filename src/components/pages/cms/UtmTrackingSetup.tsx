@@ -150,7 +150,7 @@ const UtmTrackingSetup: React.FC = () => {
                   </div>
                 ) : (
                   <p className="text-xs text-gray-500">
-                    "Uncategorized Source" entry not found. Run setup to create the default record.
+                    &quot;Uncategorized Source&quot; entry not found. Run setup to create the default record.
                   </p>
                 )}
               </div>
