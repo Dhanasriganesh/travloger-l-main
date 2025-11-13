@@ -35,6 +35,7 @@ import ProfitCalculationMaster from '../pages/cms/ProfitCalculationMaster'
 import NotificationTemplateMaster from '../pages/cms/NotificationTemplateMaster'
 import IntegrationSettingsMaster from '../pages/cms/IntegrationSettingsMaster'
 import AuditLogMaster from '../pages/cms/AuditLogMaster'
+import UtmTrackingSetup from '../pages/cms/UtmTrackingSetup'
 import Settings from '../pages/Settings'
 import WebsiteEdit from '../pages/cms/WebsiteEdit'
 import Employees from '../pages/Employees'
@@ -221,6 +222,11 @@ const Routers: React.FC = () => {
       <Route path="/settings/integration-settings-master" element={
         <ProtectedRoute requiredRole="Super Admin">
           <IntegrationSettingsMaster />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings/utm-tracking-setup" element={
+        <ProtectedRoute requiredRole="Super Admin">
+          <UtmTrackingSetup />
         </ProtectedRoute>
       } />
       <Route path="/settings/audit-log-master" element={
