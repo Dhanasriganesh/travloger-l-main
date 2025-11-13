@@ -61,6 +61,7 @@ const ExpenseTrackingMaster: React.FC = () => {
 
   useEffect(() => {
     fetchExpenses()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterCategory])
 
   const fetchExpenses = async () => {

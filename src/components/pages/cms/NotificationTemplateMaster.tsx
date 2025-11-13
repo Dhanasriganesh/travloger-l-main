@@ -76,6 +76,7 @@ const NotificationTemplateMaster: React.FC = () => {
 
   useEffect(() => {
     fetchTemplates()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterChannel, filterStatus])
 
   const fetchTemplates = async () => {

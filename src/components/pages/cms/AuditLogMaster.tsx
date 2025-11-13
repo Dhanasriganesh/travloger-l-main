@@ -69,6 +69,7 @@ const AuditLogMaster: React.FC = () => {
 
   useEffect(() => {
     fetchLogs()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterModule, filterAction, filterUser, limit])
 
   const fetchLogs = async () => {

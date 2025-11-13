@@ -59,6 +59,7 @@ const ProfitCalculationMaster: React.FC = () => {
 
   useEffect(() => {
     fetchCalculations()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus])
 
   const fetchCalculations = async () => {
